@@ -1,0 +1,20 @@
+.contend__tittle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.tittle__app {
+	font-size: 3.2em;
+	background: #c5cf36;
+	background: linear-gradient(
+		to right,
+		#c5cf36 19%,
+		#99ff5e 37%,
+		#2bffb8 41%,
+		#5b3ecf 84%
+	);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}

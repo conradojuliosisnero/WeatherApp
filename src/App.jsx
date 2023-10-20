@@ -1,14 +1,12 @@
 import './App.css';
 import WeatherCard from './components/CardWeather/CardWeather';
+import FetchingWeather from './fetching-data/fetching.weather';
 
 function App() {
   return (
     <div className="app">
-      <header className="header">Weather App</header>
-      <main className="content">
-        <div className="cards">
-			<WeatherCard/>
-        </div>
+      <main className='contend__app'>
+      <FetchingWeather/>
       </main>
     </div>
   );
