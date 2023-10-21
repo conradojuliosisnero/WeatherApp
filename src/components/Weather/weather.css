@@ -18,10 +18,24 @@
 }
 
 .card__weather--contend {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
     padding: 20px 0px;
+}
+
+.reload__btn{
+	position: absolute;
+	left: 20px;
+	top: 30px;
+	background-color: #ffffff;
+	color: #000;
+	border-radius: 3em;
+	padding: 10px 15px;
+	border: none;
+	outline: none;
+	cursor: pointer;
 }

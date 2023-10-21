@@ -1,12 +1,11 @@
+import Weather from './components/Weather/Weather.jsx'
 import './App.css';
-import WeatherCard from './components/CardWeather/CardWeather';
-import FetchingWeather from './fetching-data/fetching.weather';
 
 function App() {
   return (
     <div className="app">
       <main className='contend__app'>
-      <FetchingWeather/>
+      <Weather/>
       </main>
     </div>
   );

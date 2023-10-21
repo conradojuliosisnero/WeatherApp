@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
-import Loading from "../components/Loading/Loading";
-import WeatherCard from "../components/CardWeather/CardWeather";
-import "./fetch.css";
-import Search from "../components/Search/Search";
-import Error from "../components/Error/Error";
-import FooterApp from "../components/FooterApp/FooterApp";
-import TittleApp from "../components/TittleApp/TittleApp";
+import Loading from "../Loading/Loading";
+import WeatherCard from "../CardWeather/CardWeather";
+import Search from "../Search/Search";
+import Error from "../Error/Error";
+import FooterApp from "../FooterApp/FooterApp";
+import TittleApp from "../TittleApp/TittleApp";
+import "./weather.css";
 
 function FetchingWeather() {
 	// Estado para almacenar los datos climáticos
 	const [weatherData, setWeatherData] = useState(null);
 
+	//estado para recargar la informacion
+
+	const [reload, setReload] = useState(false);
+
 	// Estado para controlar la carga
 	const [loading, setLoading] = useState(true);
 
 	// Estado para almacenar la ciudad de búsqueda
-	const [searchCity, setSearchCity] = useState("london");
+	const [searchCity, setSearchCity] = useState("Cartagena");
 
 	// Estado para manejar errores
 	const [error, setError] = useState(null);
@@ -25,13 +29,17 @@ function FetchingWeather() {
 		setSearchCity(city);
 	};
 
+	const handelReload = () => {
+		setLoading(true);
+		setError(null);
+		setReload(!reload);
+	};
 	// Efecto que se dispara cuando searchCity cambia
 	useEffect(() => {
-		fetchWeather();
-	}, [searchCity]);
+		FetchWeather();
+	}, [searchCity,reload]);
 
-	// Función para buscar datos climáticos desde una API
-	const fetchWeather = async () => {
+	const FetchWeather = async () => {
 		const apiKey = "f312c78012cdaf9d869d5e6577f7c274";
 		const urlApi = `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=${apiKey}`;
 
@@ -42,7 +50,6 @@ function FetchingWeather() {
 				// Si la solicitud es exitosa, actualiza los datos climáticos
 				const data = await result.json();
 				setWeatherData(data);
-				console.log(data);
 				// Desactiva la carga y limpia cualquier error previo
 				setLoading(false);
 				setError(null);
@@ -68,7 +75,7 @@ function FetchingWeather() {
 
 	return (
 		<div>
-			<TittleApp/>
+			<TittleApp />
 			<div>
 				<div className="contend__search">
 					{/* Componente de búsqueda que actualiza la ciudad */}
@@ -93,9 +100,10 @@ function FetchingWeather() {
 							tempMin={weatherData.main.temp_min}
 						/>
 					)}
+					<button className="reload__btn" onClick={handelReload}>Reload</button>
 				</div>
 			</div>
-			<FooterApp/>
+			<FooterApp />
 		</div>
 	);
 }
