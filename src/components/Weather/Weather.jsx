@@ -51,6 +51,7 @@ function FetchingWeather() {
 				// Si la solicitud es exitosa, actualiza los datos climáticos
 				const data = await result.json();
 				setWeatherData(data);
+				console.log(data);
 				// Desactiva la carga y limpia cualquier error previo
 				setLoading(false);
 				setError(null);
@@ -100,7 +101,6 @@ function FetchingWeather() {
 							tempMax={weatherData.main.temp_max}
 							tempMin={weatherData.main.temp_min}
 							country={weatherData.sys.country}
-							humidity={weatherData.main.humidity}
 						/>
 					)}
 					{error && (
