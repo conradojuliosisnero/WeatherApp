@@ -1,6 +1,10 @@
 
 
 # Aplicación del Clima en Vite
+<img width="480" alt="image" src="https://github.com/conradojuliosisnero/WeatherApp/assets/111514635/68a8f91c-8c94-43bd-a1f3-48cbbcbd7cb6">
+
+
+
 Este es un proyecto de una aplicación de pronóstico del clima desarrollada con Vite, diseñada para proporcionar información actualizada sobre las condiciones climáticas de diversas ubicaciones en todo el mundo. La aplicación te permite visualizar fácilmente los datos meteorológicos, incluyendo temperaturas, condiciones del cielo y otros detalles importantes.
 
 ## Características Principales:
