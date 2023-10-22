@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./cardweather.css";
 
-function WeatherCard({ temp, description, city, icon, tempMax, tempMin }) {
+function WeatherCard({ temp, description, city, icon, tempMax, tempMin ,country,humidity}) {
 	const [temperatureScale, setTemperatureScale] = useState("K");
 	const [temperatureValue, setTemperatureValue] = useState(temp);
 	const [temperatureValueMax, setTemperatureValueMax] = useState(tempMax);
@@ -47,8 +47,8 @@ function WeatherCard({ temp, description, city, icon, tempMax, tempMin }) {
 	return (
 		<div className="cardContainer">
 			<div className="card">
-				<p className="city">{city}</p>
-				<p className="weather">PARTLY CLOUDY</p>
+				<p className="city">{city} - {country}</p>
+				<p className="weather">humidity {humidity}%</p>
 				<img className="icon__weather" src={`https://openweathermap.org/img/wn/${icon}.png`} alt="icon" />
 				<div className="description">{description}</div>
 				<p className="temp">

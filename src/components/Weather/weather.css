@@ -29,8 +29,9 @@
 
 .reload__btn{
 	position: absolute;
-	left: 20px;
-	top: 30px;
+	left: 50%;
+	transform: translate(-50%,100%);
+	top: 50%;
 	background-color: #ffffff;
 	color: #000;
 	border-radius: 3em;

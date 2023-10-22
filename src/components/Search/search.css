@@ -11,7 +11,7 @@
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.search button[type="submit"] {
+button[type="submit"] {
 	background-color: #848484;
 	border: none;
 	color: #fff;
@@ -29,7 +29,7 @@ input:focus{
 	outline: none;
 }
 
-.search button[type="submit"]:hover {
+button[type="submit"]:hover {
 	/* transform: scale(1.1); */
 	color: rgb(65, 65, 65);
 	background-color: rgb(222, 222, 222);

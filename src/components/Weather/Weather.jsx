@@ -33,11 +33,12 @@ function FetchingWeather() {
 		setLoading(true);
 		setError(null);
 		setReload(!reload);
+		setSearchCity("cartagena")
 	};
 	// Efecto que se dispara cuando searchCity cambia
 	useEffect(() => {
 		FetchWeather();
-	}, [searchCity,reload]);
+	}, [searchCity, reload]);
 
 	const FetchWeather = async () => {
 		const apiKey = "f312c78012cdaf9d869d5e6577f7c274";
@@ -50,6 +51,7 @@ function FetchingWeather() {
 				// Si la solicitud es exitosa, actualiza los datos climáticos
 				const data = await result.json();
 				setWeatherData(data);
+				console.log(data);
 				// Desactiva la carga y limpia cualquier error previo
 				setLoading(false);
 				setError(null);
@@ -79,7 +81,7 @@ function FetchingWeather() {
 			<div>
 				<div className="contend__search">
 					{/* Componente de búsqueda que actualiza la ciudad */}
-					<Search onSearch={updateCity} />
+					<Search onSearch={updateCity} initialCity={searchCity}/>
 				</div>
 				<div className="card__weather--contend">
 					{/* Renderizado condicional para mostrar diferentes componentes */}
@@ -98,9 +100,15 @@ function FetchingWeather() {
 							description={weatherData.weather[0].description}
 							tempMax={weatherData.main.temp_max}
 							tempMin={weatherData.main.temp_min}
+							country={weatherData.sys.country}
+							humidity={weatherData.main.humidity}
 						/>
 					)}
-					<button className="reload__btn" onClick={handelReload}>Reload</button>
+					{error && (
+						<button className="reload__btn" onClick={handelReload}>
+							Reload
+						</button>
+					)}
 				</div>
 			</div>
 			<FooterApp />
