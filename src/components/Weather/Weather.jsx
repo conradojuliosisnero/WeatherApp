@@ -51,7 +51,7 @@ function FetchingWeather() {
 				// Si la solicitud es exitosa, actualiza los datos climáticos
 				const data = await result.json();
 				setWeatherData(data);
-				console.log(data);
+
 				// Desactiva la carga y limpia cualquier error previo
 				setLoading(false);
 				setError(null);
