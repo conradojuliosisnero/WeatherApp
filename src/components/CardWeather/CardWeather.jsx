@@ -95,4 +95,4 @@ function WeatherCard({
   );
 }
 
-export default WeatherCard; // Exportamos el componente para su uso en otras partes de la aplicación
+export default WeatherCard; 
