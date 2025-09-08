@@ -1,0 +1,153 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background-color: white;
+  color: #374151;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.input-icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.input-icon--left {
+  left: 12px;
+}
+
+.input-icon--right {
+  right: 12px;
+}
+
+.input-error-message {
+  font-size: 0.875rem;
+  color: #ef4444;
+  margin-top: 0.25rem;
+}
+
+/* Tamaños */
+.input-wrapper--small .input {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  min-height: 36px;
+}
+
+.input-wrapper--small .input-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.input-wrapper--small .input:has(+ .input-icon--left) {
+  padding-left: 2.5rem;
+}
+
+.input-wrapper--small .input:has(+ .input-icon--right) {
+  padding-right: 2.5rem;
+}
+
+.input-wrapper--medium .input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  min-height: 44px;
+}
+
+.input-wrapper--medium .input-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.input-wrapper--large .input {
+  padding: 1rem 1.25rem;
+  font-size: 1.125rem;
+  min-height: 52px;
+}
+
+.input-wrapper--large .input-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Ajuste de padding cuando hay iconos */
+.input-wrapper--medium .input-container:has(.input-icon--left) .input {
+  padding-left: 3rem;
+}
+
+.input-wrapper--medium .input-container:has(.input-icon--right) .input {
+  padding-right: 3rem;
+}
+
+.input-wrapper--large .input-container:has(.input-icon--left) .input {
+  padding-left: 3.5rem;
+}
+
+.input-wrapper--large .input-container:has(.input-icon--right) .input {
+  padding-right: 3.5rem;
+}
+
+/* Variantes */
+.input-wrapper--default .input {
+  border-color: #e5e7eb;
+}
+
+.input-wrapper--search .input {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.input-wrapper--search .input:focus {
+  background-color: white;
+  border-color: #3b82f6;
+}
+
+/* Estados */
+.input-wrapper--error .input {
+  border-color: #ef4444;
+}
+
+.input-wrapper--error .input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.input-wrapper--disabled .input {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #d1d5db;
+}
+
+.input-wrapper--disabled .input:focus {
+  border-color: #d1d5db;
+  box-shadow: none;
+}

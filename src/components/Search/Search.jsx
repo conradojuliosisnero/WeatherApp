@@ -1,55 +1,69 @@
 import { useState } from "react";
+import { Search as SearchIcon } from "lucide-react";
+import { Input, Button } from "../UI";
+import { validationUtils } from "../../utils";
+import toast from "react-hot-toast";
 import "./search.css";
-import svgSearch from '../../../public/search-svgrepo-com.png'
 
-function Search({ onSearch }) {
-  // Estado local para almacenar el valor de la ciudad de búsqueda.
-  const [searchCity, setSearchCity] = useState("");
+/**
+ * Componente de búsqueda refactorizado
+ * Aplica principios SOLID y utiliza componentes UI reutilizables
+ */
+function Search({ onSearch, initialCity = "" }) {
+  const [searchCity, setSearchCity] = useState(initialCity);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Función que se ejecuta al enviar el formulario.
-  const onSubmit = (e) => {
-    e.preventDefault(); // Evita la recarga de la página al enviar el formulario.
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    // Limpia y normaliza el nombre de la ciudad ingresada.
-    const cleanedCity = cleanAndNormalizeCityName(searchCity);
-    console.log(cleanedCity);
-    // Llama a la función "onSearch" con el nombre de la ciudad limpio.
-    onSearch(cleanedCity);
+    // Validación usando utilidades
+    if (!validationUtils.isValidCityName(searchCity)) {
+      toast.error("Por favor ingresa un nombre de ciudad válido");
+      return;
+    }
 
-    // Imprime el nombre de la ciudad limpio en la consola.
-    console.log(cleanedCity);
+    setIsLoading(true);
+
+    try {
+      // Llamar a la función de búsqueda
+      await onSearch(searchCity.trim());
+    } catch (error) {
+      toast.error("Error al buscar la ciudad");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Limpia y normaliza el nombre de la ciudad.
-  const cleanAndNormalizeCityName = (cityName) => {
-    // Elimina caracteres especiales y convierte a minúsculas.
-
-    const city = cityName.toLowerCase();
-    console.log("funcion", city);
-    return city;
+  const handleInputChange = (e) => {
+    setSearchCity(e.target.value);
   };
 
   return (
     <div className="search">
-      <form onSubmit={onSubmit}>
-        <div className="search__box">
-          {/* Campo de entrada de texto para la búsqueda. */}
-          <div className="search__input__box">
-            <input
-              placeholder="Cartagena"
-              type="text"
-              className="search__input"
-              required
-              value={searchCity}
-              onChange={(e) => setSearchCity(e.target.value)}
-            />
-          </div>
-          {/* Botón para iniciar la búsqueda. */}
-          <div className="search__button__box">
-            <button type="submit" className="search__button">
-              Buscar
-            </button>
-          </div>
+      <form onSubmit={handleSubmit} className="search__form">
+        <div className="search__container">
+          <Input
+            type="text"
+            placeholder="Buscar ciudad..."
+            value={searchCity}
+            onChange={handleInputChange}
+            leftIcon={<SearchIcon />}
+            variant="search"
+            size="medium"
+            disabled={isLoading}
+            className="search__input"
+          />
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="medium"
+            loading={isLoading}
+            disabled={!searchCity.trim()}
+            className="search__button"
+          >
+            Buscar
+          </Button>
         </div>
       </form>
     </div>

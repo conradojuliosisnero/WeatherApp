@@ -1,17 +1,35 @@
 {
-  "name": "app-weather",
-  "private": true,
-  "version": "0.0.0",
+  "name": "clima-app",
+  "description": "Aplicación moderna del clima con React, Vite y principios SOLID",
+  "version": "2.0.0",
   "type": "module",
+  "keywords": [
+    "react",
+    "vite",
+    "weather",
+    "clima",
+    "solid",
+    "javascript"
+  ],
+  "author": "Conrado Julio Sisnero",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/conradojuliosisnero/WeatherApp.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "lucide-react": "^0.542.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
@@ -22,5 +40,9 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "vite": "^7.1.5"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }

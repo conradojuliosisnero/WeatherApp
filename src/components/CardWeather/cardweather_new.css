@@ -134,77 +134,13 @@
   transition: all 0.3s ease;
 }
 
-/* Colores para diferentes tipos de clima y temperatura */
-
-/* SOLEADO - Gradientes según temperatura */
-.card[data-weather="sunny-hot"] .background-design {
-  background: linear-gradient(
-    135deg,
-    #ff7e5f 0%,
-    #feb47b 100%
-  ); /* Naranja caliente */
-}
-
-.card[data-weather="sunny-warm"] .background-design {
-  background: linear-gradient(
-    135deg,
-    #ffeaa7 0%,
-    #fab1a0 100%
-  ); /* Amarillo cálido */
-}
-
-.card[data-weather="sunny-cool"] .background-design {
-  background: linear-gradient(
-    135deg,
-    #74b9ff 0%,
-    #0984e3 100%
-  ); /* Azul fresco */
-}
-
-.card[data-weather="sunny-cold"] .background-design {
-  background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); /* Azul frío */
-}
-
-/* NUBLADO - Gradientes según temperatura */
-.card[data-weather="cloudy-hot"] .background-design {
-  background: linear-gradient(
-    135deg,
-    #fd79a8 0%,
-    #e84393 100%
-  ); /* Rosa caliente */
-}
-
-.card[data-weather="cloudy-warm"] .background-design {
-  background: linear-gradient(
-    135deg,
-    #fdcb6e 0%,
-    #e17055 100%
-  ); /* Naranja suave */
-}
-
-.card[data-weather="cloudy-cool"] .background-design {
-  background: linear-gradient(
-    135deg,
-    #81ecec 0%,
-    #00b894 100%
-  ); /* Verde agua */
-}
-
-.card[data-weather="cloudy-cold"] .background-design {
-  background: linear-gradient(135deg, #b2bec3 0%, #636e72 100%); /* Gris frío */
-}
-
-/* CLIMA ADVERSO - Mantienen colores fríos independiente de temperatura */
+/* Colores para diferentes tipos de clima */
 .card[data-weather="clear"] .background-design {
-  background: linear-gradient(
-    135deg,
-    #74b9ff 0%,
-    #0984e3 100%
-  ); /* Default azul */
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
 .card[data-weather="clouds"] .background-design {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 .card[data-weather="rain"] .background-design {
@@ -212,37 +148,15 @@
 }
 
 .card[data-weather="thunderstorm"] .background-design {
-  background: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%);
+  background: linear-gradient(135deg, #360033 0%, #0b8793 100%);
 }
 
 .card[data-weather="snow"] .background-design {
   background: linear-gradient(135deg, #e6ddd4 0%, #d5d4d0 100%);
-  color: #333 !important;
 }
 
 .card[data-weather="mist"] .background-design {
   background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
-}
-
-/* Ajuste de color de texto para nieve */
-.card[data-weather="snow"] {
-  color: #333 !important;
-}
-
-.card[data-weather="snow"] .left-side,
-.card[data-weather="snow"] .right-side,
-.card[data-weather="snow"] .days-section button {
-  color: #333 !important;
-}
-
-.card[data-weather="snow"] .temp-scale-btn {
-  background: rgba(51, 51, 51, 0.2);
-  border: 1px solid rgba(51, 51, 51, 0.3);
-  color: #333;
-}
-
-.card[data-weather="snow"] .circle {
-  background-color: rgba(51, 51, 51, 0.1);
 }
 
 .circle {

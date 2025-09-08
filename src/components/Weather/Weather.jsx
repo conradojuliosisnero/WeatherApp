@@ -1,97 +1,121 @@
-import { useEffect, useState } from "react";
-import Loading from "../Loading/Loading";
+import { Toaster } from "react-hot-toast";
+import { useWeather } from "../../hooks/useWeather";
+import { LoadingSpinner, ErrorMessage } from "../UI";
 import WeatherCard from "../CardWeather/CardWeather";
 import Search from "../Search/Search";
-import Error from "../Error/Error";
 import FooterApp from "../FooterApp/FooterApp";
-import TittleApp from "../TittleApp/TittleApp";
+import TitleApp from "../TittleApp/TittleApp";
+import { getWeatherTypeByTemperature } from "../../utils";
+import { useEffect } from "react";
 import "./weather.css";
 
-function FetchingWeather() {
-  const [weatherData, setWeatherData] = useState(null);
-  const [reload, setReload] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [searchCity, setSearchCity] = useState("Cartagena");
-  const [error, setError] = useState(null);
+/**
+ * Componente principal de clima refactorizado
+ * Aplica principios SOLID y arquitectura limpia
+ */
+function Weather({ onWeatherChange }) {
+  // Usar el hook personalizado para manejar la lógica del clima
+  const { weatherData, loading, error, updateCity, handleReload } =
+    useWeather("cartagena");
 
-  const updateCity = (city) => {
-    setSearchCity(city);
-  };
-
-  const handelReload = () => {
-    setLoading(true);
-    setError(null);
-    setReload(!reload);
-    setSearchCity("cartagena");
-  };
-
+  // Efecto para notificar cambios de clima al componente padre
   useEffect(() => {
-    const FetchWeather = async () => {
-      const APIKEY = import.meta.env.VITE_API_KEY;
-      const urlApi = `${
-        import.meta.env.VITE_API_URL
-      }?q=${searchCity}&appid=${APIKEY}`;
-
-      try {
-        const result = await fetch(urlApi);
-        if (result.ok) {
-          const data = await result.json();
-          setWeatherData(data);
-          setLoading(false);
-          setError(null);
-        } else {
-          setError("Failed to fetch weather data");
-          setLoading(false);
-        }
-      } catch (error) {
-        setError("An error occurred while fetching weather data");
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-    FetchWeather();
-  }, [searchCity, reload]);
-
+    if (weatherData && onWeatherChange) {
+      const weatherType = getWeatherTypeByTemperature(
+        weatherData.weather[0].icon,
+        weatherData.weather[0].description,
+        weatherData.main.temp,
+        "C" // Asumimos que la API devuelve en Celsius
+      );
+      onWeatherChange(weatherType);
+    }
+  }, [weatherData, onWeatherChange]);
 
   return (
-    <div>
-      <TittleApp />
-      <div>
-        <div className="contend__search">
-          {/* Componente de búsqueda que actualiza la ciudad */}
-          <Search onSearch={updateCity} initialCity={searchCity} />
-        </div>
-        <div className="card__weather--contend">
-          {/* Renderizado condicional para mostrar diferentes componentes */}
-          {loading ? (
-            // Muestra el componente de carga mientras se obtienen los datos
-            <Loading />
-          ) : error ? (
-            // Muestra el componente de error en caso de error
-            <Error message={error} />
-          ) : (
-            // Muestra el componente WeatherCard con los datos climáticos
-            <WeatherCard
-              temp={Math.round(weatherData.main.temp)}
-              city={weatherData.name}
-              icon={weatherData.weather[0].icon}
-              description={weatherData.weather[0].description}
-              tempMax={weatherData.main.temp_max}
-              tempMin={weatherData.main.temp_min}
-              country={weatherData.sys.country}
-            />
-          )}
-          {error && (
-            <button className="reload__btn" onClick={handelReload}>
-              Reload
-            </button>
-          )}
-        </div>
+    <div className="weather-app">
+      {/* Notificaciones de react-hot-toast */}
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "rgba(255, 255, 255, 0.95)",
+            color: "#374151",
+            backdropFilter: "blur(10px)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: "12px",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+            fontWeight: "500",
+          },
+          success: {
+            iconTheme: {
+              primary: "#10b981",
+              secondary: "#ffffff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#ffffff",
+            },
+          },
+        }}
+      />
+
+      <div className="weather-app__container">
+        {/* Header minimalista con título */}
+        <header className="weather-app__header">
+          <TitleApp />
+        </header>
+
+        {/* Layout principal para desktop: izquierda a derecha */}
+        <main className="weather-app__main">
+          {/* Sidebar izquierdo: Buscador */}
+          <aside className="weather-app__sidebar">
+            <div className="weather-app__search-card">
+              <h2 className="search-card__title">Buscar Ubicación</h2>
+              <Search onSearch={updateCity} />
+            </div>
+          </aside>
+
+          {/* Contenido principal: Card del clima */}
+          <section className="weather-app__content">
+            <div className="weather-content__wrapper">
+              {loading ? (
+                <LoadingSpinner
+                  size="large"
+                  text="Obteniendo datos del clima..."
+                  variant="white"
+                />
+              ) : error ? (
+                <ErrorMessage
+                  message={error}
+                  onRetry={handleReload}
+                  variant="error"
+                />
+              ) : weatherData ? (
+                <WeatherCard
+                  temp={weatherData.main.temp}
+                  city={weatherData.name}
+                  icon={weatherData.weather[0].icon}
+                  description={weatherData.weather[0].description}
+                  tempMax={weatherData.main.temp_max}
+                  tempMin={weatherData.main.temp_min}
+                  country={weatherData.sys.country}
+                  humidity={weatherData.main.humidity}
+                />
+              ) : null}
+            </div>
+          </section>
+        </main>
+
+        {/* Footer compacto */}
+        <footer className="weather-app__footer">
+          <FooterApp />
+        </footer>
       </div>
-      <FooterApp />
     </div>
   );
 }
 
-export default FetchingWeather;
+export default Weather;
