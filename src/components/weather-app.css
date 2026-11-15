@@ -1,0 +1,528 @@
+/* ------------------------------------------------------------------
+   Paletas pastel por condición y momento del día.
+   --p-* son los valores destino; las variables registradas con
+   @property hacen la transición suave al cambiar de ciudad.
+------------------------------------------------------------------- */
+
+@property --sky-top { syntax: "<color>"; inherits: true; initial-value: #bcd6f0; }
+@property --sky-horizon { syntax: "<color>"; inherits: true; initial-value: #fce3cf; }
+@property --ground { syntax: "<color>"; inherits: true; initial-value: #f4cfbd; }
+@property --ground-deep { syntax: "<color>"; inherits: true; initial-value: #e9b9a6; }
+@property --ink { syntax: "<color>"; inherits: true; initial-value: #2e3150; }
+@property --star { syntax: "<color>"; inherits: true; initial-value: #ffd27a; }
+
+.app {
+  /* despejado de día */
+  --p-top: #bcd6f0;
+  --p-horizon: #fce3cf;
+  --p-ground: #f4cfbd;
+  --p-deep: #e9b9a6;
+  --p-ink: #2e3150;
+  --p-star: #ffd27a;
+
+  --sky-top: var(--p-top);
+  --sky-horizon: var(--p-horizon);
+  --ground: var(--p-ground);
+  --ground-deep: var(--p-deep);
+  --ink: var(--p-ink);
+  --star: var(--p-star);
+
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --temp-size: clamp(9.5rem, 31vw, 27rem);
+  --temp-shift: 0.06em;
+
+  transition:
+    --sky-top 1.4s ease,
+    --sky-horizon 1.4s ease,
+    --ground 1.4s ease,
+    --ground-deep 1.4s ease,
+    --ink 1.4s ease,
+    --star 1.4s ease;
+
+  min-height: 100svh;
+  color: var(--ink);
+  background: var(--ground-deep);
+  overflow-x: clip;
+}
+
+.app[data-condition="clouds"] {
+  --p-top: #cdd5e3;
+  --p-horizon: #efe6ec;
+  --p-ground: #ddd2dc;
+  --p-deep: #cfc2cf;
+  --p-ink: #34374f;
+  --p-star: #fbe6b4;
+}
+.app[data-condition="rain"] {
+  --p-top: #aebdd3;
+  --p-horizon: #dbe2ec;
+  --p-ground: #c3cedd;
+  --p-deep: #b0bdd0;
+  --p-ink: #253047;
+  --p-star: #f3e7c4;
+}
+.app[data-condition="storm"] {
+  --p-top: #a39fc0;
+  --p-horizon: #d6cde3;
+  --p-ground: #bcb2cf;
+  --p-deep: #a99fc0;
+  --p-ink: #221e37;
+  --p-star: #f7e6a6;
+}
+.app[data-condition="snow"] {
+  --p-top: #d6e4f3;
+  --p-horizon: #f6f7fb;
+  --p-ground: #e6ecf5;
+  --p-deep: #d7e0ee;
+  --p-ink: #2d3a52;
+  --p-star: #fff1c9;
+}
+.app[data-condition="mist"] {
+  --p-top: #dad7e0;
+  --p-horizon: #f0ebe6;
+  --p-ground: #e0dbd5;
+  --p-deep: #d2ccc5;
+  --p-ink: #3a3841;
+  --p-star: #f8ecd2;
+}
+
+/* Noche: lavanda y periwinkle en vez de negro */
+.app[data-time="night"] {
+  --p-top: #555a8e;
+  --p-horizon: #b9a9d8;
+  --p-ground: #8f86ba;
+  --p-deep: #7a72a8;
+  --p-ink: #f7f4ff;
+  --p-star: #f6efd8;
+}
+.app[data-time="night"][data-condition="clouds"],
+.app[data-time="night"][data-condition="mist"] {
+  --p-top: #62668a;
+  --p-horizon: #b3aac8;
+  --p-ground: #8e88ab;
+  --p-deep: #7c769a;
+}
+.app[data-time="night"][data-condition="rain"],
+.app[data-time="night"][data-condition="storm"] {
+  --p-top: #4b5079;
+  --p-horizon: #9e98bf;
+  --p-ground: #7c78a2;
+  --p-deep: #696590;
+}
+
+/* ------------------------------------------------------------------
+   Barra superior
+------------------------------------------------------------------- */
+
+.topbar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem var(--gutter);
+}
+
+.wordmark {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-stretch: 85%;
+  letter-spacing: -0.02em;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  width: min(22rem, 62vw);
+  padding: 0.25rem 0.25rem 0.25rem 1.1rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, white 42%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: background 0.3s ease;
+}
+.app[data-time="night"] .search {
+  background: color-mix(in oklab, white 12%, transparent);
+}
+.search:focus-within {
+  background: color-mix(in oklab, white 62%, transparent);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.app[data-time="night"] .search:focus-within {
+  background: color-mix(in oklab, white 22%, transparent);
+}
+
+.search__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font-size: 1rem;
+  padding: 0.45rem 0;
+}
+.search__input::placeholder {
+  color: color-mix(in oklab, var(--ink) 60%, transparent);
+}
+.search__input:focus {
+  outline: none;
+}
+.search__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search__button {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--sky-top);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.search__button:hover {
+  transform: scale(1.06);
+}
+.search__button:active {
+  transform: scale(0.94);
+}
+.search__button:disabled {
+  cursor: progress;
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Cielo
+------------------------------------------------------------------- */
+
+.sky {
+  position: relative;
+  min-height: 76svh;
+  padding: 7.5rem var(--gutter) 0;
+  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-horizon) 100%);
+  overflow: hidden;
+}
+
+.place {
+  position: relative;
+  z-index: 2;
+  max-width: 34rem;
+}
+
+.place__city {
+  font-size: clamp(3rem, 8.5vw, 7.5rem);
+  font-weight: 650;
+  font-stretch: 82%;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.25rem;
+}
+.place__city--small {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.char-mask {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+  vertical-align: top;
+}
+.js-char {
+  display: inline-block;
+}
+
+.place__when {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+.place__when::first-letter {
+  text-transform: uppercase;
+}
+
+.place__sky {
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-weight: 500;
+  font-stretch: 90%;
+  margin-top: 0.35rem;
+}
+
+.place__range {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+.place--empty {
+  padding-top: 4rem;
+}
+.loading-text {
+  animation: breathe 1.8s ease-in-out infinite;
+}
+@keyframes breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.retry {
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.4rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--sky-top);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Arco del sol */
+.arc {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(100%, 88rem);
+  height: auto;
+  transform: translateX(-50%);
+  overflow: visible;
+  pointer-events: none;
+}
+.arc__track {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.22;
+  stroke-width: 2;
+  stroke-dasharray: 0.006 0.008;
+}
+.arc__trail {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.5;
+  stroke-width: 2;
+}
+.arc__star {
+  fill: var(--star);
+}
+.arc__glow {
+  animation: glow 5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes glow {
+  50% {
+    transform: scale(1.12);
+    opacity: 0.8;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Temperatura: apoyada sobre el horizonte, con su reflejo debajo
+------------------------------------------------------------------- */
+
+.temp {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  font-size: var(--temp-size);
+  font-weight: 230;
+  font-stretch: 75%;
+  line-height: 0.74;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  transform: translateY(var(--temp-shift));
+}
+
+.temp__value {
+  display: block;
+  /* compensa el tracking negativo del último dígito */
+  padding-right: 0.06em;
+}
+
+.temp__unit {
+  margin: 0.04em 0 0 0.14em;
+  padding: 0.2em 0.35em;
+  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  font-weight: 600;
+  font-stretch: 90%;
+  letter-spacing: 0;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+button.temp__unit:hover {
+  background: color-mix(in oklab, var(--ink) 10%, transparent);
+}
+button.temp__unit:active {
+  transform: scale(0.94);
+}
+
+.ground {
+  position: relative;
+  padding: 0 var(--gutter) 2rem;
+  background: linear-gradient(to bottom, var(--ground) 0%, var(--ground-deep) 100%);
+  overflow: hidden;
+}
+
+.temp--reflection {
+  top: 0;
+  bottom: auto;
+  z-index: 0;
+  pointer-events: none;
+  transform: scaleY(-1) translateY(var(--temp-shift));
+  opacity: 0.22;
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 65%);
+  mask-image: linear-gradient(to top, black 0%, transparent 65%);
+}
+.temp--reflection .temp__unit {
+  border-color: transparent;
+}
+
+.sun-times {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  max-width: 88rem;
+  margin: 0 auto;
+  padding-top: 0.9rem;
+  font-size: 0.95rem;
+}
+.sun-times strong {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------
+   Lecturas
+------------------------------------------------------------------- */
+
+.readings {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 2.5rem 2rem;
+  max-width: 88rem;
+  margin: clamp(6rem, 13vw, 12rem) auto 0;
+}
+
+.reading dt {
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.reading dd {
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  font-weight: 300;
+  font-stretch: 78%;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.reading dd small {
+  margin-left: 0.15em;
+  font-size: 0.42em;
+  font-weight: 500;
+  font-stretch: 100%;
+  letter-spacing: 0;
+}
+
+.reading__note {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+.meter {
+  width: min(9rem, 100%);
+  height: 4px;
+  margin-top: 0.5rem;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--ink) 15%, transparent);
+  overflow: hidden;
+}
+.meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ink);
+}
+
+.footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  max-width: 88rem;
+  margin: 5rem auto 0;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+.footer a {
+  text-underline-offset: 0.2em;
+}
+
+.toast {
+  background: var(--ink) !important;
+  color: var(--sky-top) !important;
+  border-radius: 999px !important;
+  font-family: "Bricolage Grotesque Variable", system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------
+   Móvil
+------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .topbar {
+    padding-top: 1.1rem;
+  }
+  .sky {
+    min-height: 74svh;
+    padding-top: 6rem;
+  }
+  .app {
+    --temp-size: clamp(10rem, 80vw, 20rem);
+  }
+  .place__city {
+    font-size: clamp(3.25rem, 15vw, 4.5rem);
+  }
+  .sun-times {
+    font-size: 0.85rem;
+  }
+  .readings {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1.25rem;
+    margin-top: clamp(6rem, 30vw, 9rem);
+  }
+}

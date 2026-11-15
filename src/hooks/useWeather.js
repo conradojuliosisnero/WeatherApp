@@ -1,73 +1,57 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { createWeatherService } from "../services/weatherService";
 import { validationUtils } from "../utils";
 
+const weatherService = createWeatherService();
+
 /**
- * Hook personalizado para manejar la lógica del clima
- * Aplica el principio de Responsabilidad Única (SRP) del SOLID
+ * Hook para obtener el clima de una ciudad.
+ * Si una búsqueda falla, se conservan los datos de la ciudad anterior.
  */
 export const useWeather = (initialCity = "Cartagena") => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [searchCity, setSearchCity] = useState(initialCity);
   const [error, setError] = useState(null);
-  const [reload, setReload] = useState(false);
+  const [query, setQuery] = useState({ city: initialCity, n: 0 });
 
-  // Instancia del servicio del clima (Inversión de Dependencias)
-  const weatherService = createWeatherService();
-
-  // Función para actualizar la ciudad
-  const updateCity = (city) => {
+  const updateCity = useCallback((city) => {
     if (!validationUtils.isValidCityName(city)) {
-      toast.error("Por favor ingresa un nombre de ciudad válido");
+      toast.error("Escribe el nombre de una ciudad");
       return;
     }
-    setSearchCity(city.trim());
-  };
+    // n fuerza una nueva petición aunque se repita la misma ciudad
+    setQuery((q) => ({ city: city.trim(), n: q.n + 1 }));
+  }, []);
 
-  // Función para recargar los datos
-  const handleReload = () => {
-    setLoading(true);
-    setError(null);
-    setReload((prev) => !prev);
-    setSearchCity(initialCity);
-    toast.loading("Recargando datos del clima...", { id: "reload" });
-  };
+  const handleReload = useCallback(() => {
+    setQuery((q) => ({ city: q.city, n: q.n + 1 }));
+  }, []);
 
   useEffect(() => {
-    const fetchWeather = async () => {
-      if (!searchCity) return;
+    let cancelled = false;
 
+    const fetchWeather = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Usar el servicio del clima
-        const data = await weatherService.getWeatherByCity(searchCity);
-        setWeatherData(data);
-        toast.success(`Datos del clima cargados para ${data.name}`, {
-          id: "reload",
-        });
-      } catch (error) {
-        const errorMessage =
-          error.message || "Error al obtener los datos del clima";
-        setError(errorMessage);
-        toast.error(errorMessage, { id: "reload" });
+        const data = await weatherService.getWeatherByCity(query.city);
+        if (!cancelled) setWeatherData(data);
+      } catch (err) {
+        if (cancelled) return;
+        const message = err.message || "No se pudo obtener el clima";
+        setError(message);
+        toast.error(message, { id: "weather-error" });
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchWeather();
-  }, [searchCity, reload]);
+    return () => {
+      cancelled = true;
+    };
+  }, [query]);
 
-  return {
-    weatherData,
-    loading,
-    error,
-    searchCity,
-    updateCity,
-    handleReload,
-  };
+  return { weatherData, loading, error, updateCity, handleReload };
 };
