@@ -178,7 +178,7 @@ export default function WeatherApp() {
                     key={introKey}
                     className="temp__value"
                     number={temp}
-                    fromNumber={0}
+                   
                   />
                   <RippleButton
                     type="button"
@@ -234,7 +234,7 @@ export default function WeatherApp() {
                     key={introKey}
                     className="temp__value"
                     number={temp}
-                    fromNumber={0}
+                   
                   />
                   <span className="temp__unit">{scaleSymbol(scale)}</span>
                 </div>
