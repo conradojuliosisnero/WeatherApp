@@ -14,6 +14,7 @@ El clima actual de cualquier ciudad, dibujado como un cielo: el color cambia con
 - Microinteracciones con [Animate UI](https://animate-ui.com): iconos animados (cielo, lecturas, amanecer/atardecer, buscador), números que ruedan como un cuentakilómetros al cambiar de ciudad o de escala, ondas al pulsar los botones y brillo en el texto de carga.
 - **Cielo real** con [@takustaqu/atmosphere](https://www.npmjs.com/package/@takustaqu/atmosphere) (WebGL): sol, luna con su fase, estrellas, nubes y rayos según la hora, el lugar y el clima de la búsqueda. El texto pasa a claro u oscuro según el brillo que mide del cielo.
 - **Lluvia, nieve, niebla y rayos a pantalla completa** con [react-weather-effects](https://www.npmjs.com/package/react-weather-effects).
+- **Gotas en la lente** cuando llueve: se forman, resbalan dejando rastro, se juntan y se secan al parar (simulación propia en `src/utils/drops.js`, sin dependencias).
 - Paletas por clima y momento del día (amanecer, día, atardecer, noche) para el suelo, el texto y como respaldo sin WebGL.
 - Todo respeta la preferencia del sistema de reducir movimiento.
 
@@ -38,6 +39,7 @@ La API key **nunca llega al navegador**. Vive solo en la variable de entorno `OW
 | `src/hooks/useSkyIntro.js` | Animación de entrada (GSAP) |
 | `src/components/SkyBackdrop.jsx` | Cielo WebGL (atmosphere) |
 | `src/components/WeatherEffects.jsx` | Capa de lluvia, nieve, niebla y rayos |
+| `src/components/LensDrops.jsx` | Gotas que resbalan por la "lente" |
 | `src/components/icons/` | Iconos animados copiados de Animate UI |
 | `src/services/weatherService.js` | Llama a `/api/weather` |
 | `src/utils/sky.js` | Condición, día/noche y posición del sol |

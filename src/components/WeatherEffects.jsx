@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   WeatherCanvas,
   Rain,
@@ -6,7 +7,11 @@ import {
   Lightning,
   presets,
 } from "react-weather-effects";
-import { effectsSceneFor, screenWind, SKY_TRANSITION_MS as FADE } from "../utils";
+import {
+  effectsSceneFor,
+  screenWind,
+  SKY_TRANSITION_MS as FADE,
+} from "../utils";
 
 /**
  * Lluvia, nieve, niebla y rayos a pantalla completa (react-weather-effects), encima
@@ -14,6 +19,16 @@ import { effectsSceneFor, screenWind, SKY_TRANSITION_MS as FADE } from "../utils
  * al cambiar de clima se desvanezcan en vez de cortarse.
  */
 export default function WeatherEffects({ data, condition, darkSky }) {
+  // Con "reducir movimiento" la librería congela un rayo en pantalla: mejor sin rayo
+  const [reduce, setReduce] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduce(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   const name = data ? effectsSceneFor(data, condition) : null;
   const scene = name ? presets[name] : {};
   // Lluvia clara sobre cielo oscuro y oscura sobre cielo claro, o no se vería
@@ -39,7 +54,7 @@ export default function WeatherEffects({ data, condition, darkSky }) {
         color={snowColor}
       />
       <Fog density={0} transitionDuration={FADE} {...scene.fog} />
-      {scene.lightning && <Lightning {...scene.lightning} />}
+      {scene.lightning && !reduce && <Lightning {...scene.lightning} />}
     </WeatherCanvas>
   );
 }
