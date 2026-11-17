@@ -16,12 +16,16 @@ const CONDITION_BY_ICON = {
 };
 
 const DAY = 86400;
+const MIN = 60;
+// Ventanas de la "hora dorada" alrededor del amanecer y del atardecer
+const DAWN = [-40 * MIN, 50 * MIN];
+const DUSK = [-50 * MIN, 40 * MIN];
 const clamp01 = (n) => Math.min(1, Math.max(0, n));
 
 /**
  * @param {object} data respuesta de /data/2.5/weather
  * @param {number} [nowSec] segundos unix (por defecto: ahora)
- * @returns {{ condition: string, isNight: boolean, progress: number }}
+ * @returns {{ condition: string, isNight: boolean, phase: "dawn" | "day" | "dusk" | "night", progress: number }}
  */
 export const getSky = (data, nowSec = Date.now() / 1000) => {
   const icon = data?.weather?.[0]?.icon ?? "01d";
@@ -29,7 +33,8 @@ export const getSky = (data, nowSec = Date.now() / 1000) => {
   const { sunrise, sunset } = data?.sys ?? {};
 
   if (!sunrise || !sunset) {
-    return { condition, isNight: icon.endsWith("n"), progress: 0.5 };
+    const isNight = icon.endsWith("n");
+    return { condition, isNight, phase: isNight ? "night" : "day", progress: 0.5 };
   }
 
   const isNight = nowSec < sunrise || nowSec > sunset;
@@ -44,7 +49,16 @@ export const getSky = (data, nowSec = Date.now() / 1000) => {
     progress = (nowSec - prevSunset) / (sunrise - prevSunset);
   }
 
-  return { condition, isNight, progress: clamp01(progress) };
+  const near = (t, [from, to]) => nowSec >= t + from && nowSec <= t + to;
+  const phase = near(sunrise, DAWN)
+    ? "dawn"
+    : near(sunset, DUSK)
+      ? "dusk"
+      : isNight
+        ? "night"
+        : "day";
+
+  return { condition, isNight, phase, progress: clamp01(progress) };
 };
 
 /**

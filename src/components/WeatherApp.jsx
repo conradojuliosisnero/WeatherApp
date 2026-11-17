@@ -70,7 +70,7 @@ export default function WeatherApp() {
 
   const sky = data
     ? getSky(data)
-    : { condition: "clear", isNight: false, progress: 0.5 };
+    : { condition: "clear", isNight: false, phase: "day", progress: 0.5 };
   const temp = data ? Math.round(convertTemp(data.main.temp, scale)) : null;
   const introKey = data ? `${data.id}-${data.dt}` : null;
   const SkyIcon = SKY_ICONS[sky.condition][sky.isNight ? 1 : 0];
@@ -85,7 +85,7 @@ export default function WeatherApp() {
     const meta = document.querySelector('meta[name="theme-color"]');
     const color = getComputedStyle(rootRef.current).getPropertyValue("--p-top");
     if (meta && color) meta.setAttribute("content", color.trim());
-  }, [sky.condition, sky.isNight]);
+  }, [sky.condition, sky.phase]);
 
   const nextScale = SCALES[(SCALES.indexOf(scale) + 1) % SCALES.length];
 
@@ -95,7 +95,7 @@ export default function WeatherApp() {
         ref={rootRef}
         className="app"
         data-condition={sky.condition}
-        data-time={sky.isNight ? "night" : "day"}
+        data-time={sky.phase}
         aria-busy={loading}
       >
         <Toaster
