@@ -72,3 +72,48 @@ export const formatLocal = (unixSec, tzOffsetSec, options) =>
     ...options,
     timeZone: "UTC",
   });
+
+/** Precipitación en mm/h que da la API (lluvia o nieve de la última hora). */
+const precipitationOf = (data) => data?.rain?.["1h"] ?? data?.snow?.["1h"] ?? 0;
+
+/**
+ * Traduce la respuesta de OpenWeatherMap al clima que dibuja @takustaqu/atmosphere
+ * (unidades de observación: 0..1, mm/h, m/s, km).
+ */
+export const toAtmosphereWeather = (data, condition) => {
+  // Sin dato de precipitación, un valor típico según la condición
+  const fallback = { rain: 2, storm: 12, snow: 1.5 }[condition] ?? 0;
+  return {
+    cloudCover: (data?.clouds?.all ?? 0) / 100,
+    precipitation: precipitationOf(data) || fallback,
+    precipitationType: condition === "snow" ? "snow" : "rain",
+    windSpeed: data?.wind?.speed ?? 2,
+    thunder: condition === "storm" ? 0.8 : 0,
+    visibility: (data?.visibility ?? 10000) / 1000,
+  };
+};
+
+/**
+ * Escena de react-weather-effects para la capa de lluvia/nieve/niebla/rayos.
+ * Devuelve null cuando el cielo no tiene nada que caer (despejado o nubes).
+ */
+export const effectsSceneFor = (data, condition) => {
+  const icon = data?.weather?.[0]?.icon ?? "";
+  const mm = precipitationOf(data);
+  const wind = data?.wind?.speed ?? 0;
+  if (condition === "storm") return "thunderstorm";
+  if (condition === "rain") return icon.startsWith("09") || (mm > 0 && mm < 2.5) ? "drizzle" : "rainstorm";
+  if (condition === "snow") return mm > 2 || wind > 10 ? "blizzard" : "snowfall";
+  if (condition === "mist") return "mist";
+  return null;
+};
+
+/**
+ * Viento en pantalla: la API da de dónde sopla (grados) y la velocidad (m/s).
+ * Hacia la derecha = hacia el este; el valor es relativo (~0..3).
+ */
+export const screenWind = (data) => {
+  const speed = data?.wind?.speed ?? 0;
+  const to = (((data?.wind?.deg ?? 0) + 180) * Math.PI) / 180;
+  return { x: Math.round(Math.sin(to) * Math.min(speed / 4, 3) * 100) / 100, y: 0 };
+};

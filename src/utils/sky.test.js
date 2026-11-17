@@ -33,3 +33,47 @@ test("sin amanecer/atardecer usa el icono para decidir día o noche", () => {
   assert.equal(getSky({ weather: [{ icon: "10n" }], sys: {} }).phase, "night");
   assert.equal(getSky({ weather: [{ icon: "10d" }], sys: {} }).condition, "rain");
 });
+
+import { toAtmosphereWeather, effectsSceneFor, screenWind } from "./sky.js";
+
+const owm = (icon, extra = {}) => ({
+  weather: [{ icon }],
+  clouds: { all: 75 },
+  wind: { speed: 5, deg: 270 },
+  visibility: 8000,
+  ...extra,
+});
+
+test("el cielo de atmosphere recibe las unidades que espera", () => {
+  const w = toAtmosphereWeather(owm("10d", { rain: { "1h": 3.2 } }), "rain");
+  assert.deepEqual(w, {
+    cloudCover: 0.75,
+    precipitation: 3.2,
+    precipitationType: "rain",
+    windSpeed: 5,
+    thunder: 0,
+    visibility: 8,
+  });
+  // Nieve sin dato de mm/h: valor típico y tipo nieve
+  const s = toAtmosphereWeather(owm("13d"), "snow");
+  assert.equal(s.precipitationType, "snow");
+  assert.equal(s.precipitation, 1.5);
+  assert.equal(toAtmosphereWeather(owm("11d"), "storm").thunder, 0.8);
+});
+
+test("cada clima elige su escena de efectos", () => {
+  assert.equal(effectsSceneFor(owm("01d"), "clear"), null);
+  assert.equal(effectsSceneFor(owm("04d"), "clouds"), null);
+  assert.equal(effectsSceneFor(owm("09d"), "rain"), "drizzle");
+  assert.equal(effectsSceneFor(owm("10d", { rain: { "1h": 6 } }), "rain"), "rainstorm");
+  assert.equal(effectsSceneFor(owm("11d"), "storm"), "thunderstorm");
+  assert.equal(effectsSceneFor(owm("13d", { wind: { speed: 3 } }), "snow"), "snowfall");
+  assert.equal(effectsSceneFor(owm("13d", { wind: { speed: 14 } }), "snow"), "blizzard");
+  assert.equal(effectsSceneFor(owm("50d"), "mist"), "mist");
+});
+
+test("el viento del oeste empuja hacia la derecha", () => {
+  assert.ok(screenWind({ wind: { speed: 8, deg: 270 } }).x > 0);
+  assert.ok(screenWind({ wind: { speed: 8, deg: 90 } }).x < 0);
+  assert.equal(screenWind({}).x, 0);
+});
