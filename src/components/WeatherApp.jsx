@@ -17,6 +17,7 @@ import {
   convertTemp,
   scaleSymbol,
   textUtils,
+  SKY_TRANSITION_MS,
   getSky,
   formatLocal,
 } from "../utils";
@@ -76,7 +77,9 @@ export default function WeatherApp() {
     ? getSky(data)
     : { condition: "clear", isNight: false, phase: "day", progress: 0.5 };
   const temp = data ? Math.round(convertTemp(data.main.temp, scale)) : null;
-  const introKey = data ? `${data.id}-${data.dt}` : null;
+  // La entrada animada solo al cambiar de ciudad; las recargas de la misma
+  // ciudad (cada 10 min) actualizan el cielo y los números sin repetirla
+  const introKey = data ? data.id : null;
   const SkyIcon = SKY_ICONS[sky.condition][sky.isNight ? 1 : 0];
   const degree = scale !== "K" && "°";
 
@@ -101,12 +104,13 @@ export default function WeatherApp() {
         data-condition={sky.condition}
         data-time={sky.phase}
       data-sky-tone={skyTone ?? undefined}
+      style={{ "--sync": `${SKY_TRANSITION_MS}ms` }}
         aria-busy={loading}
       >
         <WeatherEffects
           data={data}
           condition={sky.condition}
-          isNight={sky.phase === "night"}
+          darkSky={skyTone ? skyTone === "dark" : sky.phase === "night"}
         />
         <Toaster
           position="bottom-center"

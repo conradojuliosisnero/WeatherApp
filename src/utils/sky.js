@@ -9,10 +9,10 @@ const CONDITION_BY_ICON = {
   "03": "clouds",
   "04": "clouds",
   "09": "rain",
-  "10": "rain",
-  "11": "storm",
-  "13": "snow",
-  "50": "mist",
+  10: "rain",
+  11: "storm",
+  13: "snow",
+  50: "mist",
 };
 
 const DAY = 86400;
@@ -34,7 +34,12 @@ export const getSky = (data, nowSec = Date.now() / 1000) => {
 
   if (!sunrise || !sunset) {
     const isNight = icon.endsWith("n");
-    return { condition, isNight, phase: isNight ? "night" : "day", progress: 0.5 };
+    return {
+      condition,
+      isNight,
+      phase: isNight ? "night" : "day",
+      progress: 0.5,
+    };
   }
 
   const isNight = nowSec < sunrise || nowSec > sunset;
@@ -102,8 +107,12 @@ export const effectsSceneFor = (data, condition) => {
   const mm = precipitationOf(data);
   const wind = data?.wind?.speed ?? 0;
   if (condition === "storm") return "thunderstorm";
-  if (condition === "rain") return icon.startsWith("09") || (mm > 0 && mm < 2.5) ? "drizzle" : "rainstorm";
-  if (condition === "snow") return mm > 2 || wind > 10 ? "blizzard" : "snowfall";
+  if (condition === "rain")
+    return icon.startsWith("09") || (mm > 0 && mm < 2.5)
+      ? "drizzle"
+      : "rainstorm";
+  if (condition === "snow")
+    return mm > 2 || wind > 10 ? "blizzard" : "snowfall";
   if (condition === "mist") return "mist";
   return null;
 };
@@ -115,5 +124,20 @@ export const effectsSceneFor = (data, condition) => {
 export const screenWind = (data) => {
   const speed = data?.wind?.speed ?? 0;
   const to = (((data?.wind?.deg ?? 0) + 180) * Math.PI) / 180;
-  return { x: Math.round(Math.sin(to) * Math.min(speed / 4, 3) * 100) / 100, y: 0 };
+  return {
+    x: Math.round(Math.sin(to) * Math.min(speed / 4, 3) * 100) / 100,
+    y: 0,
+  };
 };
+
+/**
+ * Tono del cielo según su brillo medido (0..1), con histéresis: pasa a "dark"
+ * por debajo de 0.26 y a "light" por encima de 0.34; entre medias conserva el
+ * anterior, así un rayo o una nube que pasa no hace parpadear el texto.
+ */
+export const skyToneFor = (luminance, prev = null) =>
+  luminance < 0.26
+    ? "dark"
+    : luminance > 0.34
+      ? "light"
+      : (prev ?? (luminance < 0.3 ? "dark" : "light"));

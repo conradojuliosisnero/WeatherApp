@@ -30,13 +30,17 @@
   --gutter: clamp(1.25rem, 4vw, 4rem);
   --temp-size: clamp(9.5rem, 31vw, 27rem);
 
+  /* --sync llega desde JS (SKY_TRANSITION_MS): un solo ritmo para paletas,
+     cielo WebGL, lluvia/nieve y texto. La curva imita la del cielo WebGL. */
+  --sync: 2400ms;
+  --sync-ease: cubic-bezier(0.2, 0.6, 0.4, 0.9);
   transition:
-    --sky-top 1.4s ease,
-    --sky-horizon 1.4s ease,
-    --ground 1.4s ease,
-    --ground-deep 1.4s ease,
-    --ink 1.4s ease,
-    --star 1.4s ease;
+    --sky-top var(--sync) var(--sync-ease),
+    --sky-horizon var(--sync) var(--sync-ease),
+    --ground var(--sync) var(--sync-ease),
+    --ground-deep var(--sync) var(--sync-ease),
+    --ink var(--sync) var(--sync-ease),
+    --star var(--sync) var(--sync-ease);
 
   min-height: 100svh;
   color: var(--ink);
@@ -220,7 +224,7 @@
   border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  transition: background 0.3s ease;
+  transition: background var(--sync) var(--sync-ease);
 }
 .app[data-time="night"] .search,
 .app[data-sky-tone="dark"] .search {
@@ -438,7 +442,13 @@ button.temp__unit:hover {
 .ground {
   position: relative;
   padding: 0 var(--gutter) 2rem;
-  background: linear-gradient(to bottom, var(--ground) 0%, var(--ground-deep) 100%);
+  /* empieza con el color del horizonte: sin línea dura entre cielo y suelo */
+  background: linear-gradient(
+    to bottom,
+    var(--sky-horizon) 0%,
+    var(--ground) 30%,
+    var(--ground-deep) 100%
+  );
   overflow: hidden;
 }
 
@@ -602,8 +612,11 @@ button.temp__unit:hover {
    el interlineado apretado del diseño para que la unidad quede alineada. */
 .temp__value [data-slot="sliding-number-roller"] {
   line-height: inherit !important;
-  /* cada rueda mide 1ch e ignora el letter-spacing: se lo restamos */
-  width: calc(1ch - 0.05em) !important;
+}
+/* El relleno recortado al texto solo pinta dentro de la caja del dígito, y el
+   dígito es más ancho que su rueda: se ensancha la caja para que lo cubra entero */
+.temp__value [data-slot="sliding-number-display"] {
+  inset: 0 -0.15em !important;
 }
 /* El signo menos de SlidingNumber trae un margen fijo de 0.25rem: lo pegamos al número */
 [data-slot="sliding-number"] > [aria-hidden="true"]:not([data-slot]) {
@@ -623,7 +636,7 @@ button.temp__unit:hover {
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity var(--sync) var(--sync-ease);
   pointer-events: none;
 }
 .sky-backdrop[data-ready="true"] {
@@ -638,7 +651,7 @@ button.temp__unit:hover {
 /* Con el cielo real a la vista, el sol y la luna los dibuja él: el arco sobra */
 .sky-backdrop[data-ready="true"] ~ .arc {
   opacity: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity var(--sync) var(--sync-ease);
 }
 
 /* Cielo medido oscuro: texto claro en la barra y en el cielo (el suelo sigue igual) */
@@ -652,28 +665,51 @@ button.temp__unit:hover {
    hay que volver a aplicarlo donde cambia --ink */
 .app[data-sky-tone] :is(.topbar, .sky) {
   color: var(--ink);
-  transition: --ink 1s ease;
+  /* el tono se decide al medir el cielo, a mitad del cambio: el texto va
+     al doble de rápido para terminar junto con el resto */
+  transition: --ink calc(var(--sync) / 2) var(--sync-ease);
 }
 
 /* ------------------------------------------------------------------
-   Temperatura en cristal: relleno translúcido en degradado, filo de luz
-   y sombra suave. Sigue a --ink, así que es cristal claro sobre cielo
-   oscuro y cristal oscuro sobre cielo claro.
+   Temperatura en cristal. CSS no puede desenfocar lo de detrás recortado a
+   la forma de las letras (backdrop-filter solo actúa sobre cajas), así que
+   el desenfoque va en una placa de vidrio esmerilado detrás del número, y
+   el número encima con relleno en degradado y filo de luz. Todo sigue a
+   --ink: cristal claro sobre cielo oscuro y oscuro sobre cielo claro.
 ------------------------------------------------------------------- */
+
+.sky .temp::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  /* a la derecha, sin salir de la pantalla en móvil */
+  inset: -0.07em -0.04em -0.02em -0.07em;
+  border-radius: 0.11em 0.11em 0 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.06)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-bottom: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 0.04em 0.12em rgba(20, 22, 45, 0.12);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  pointer-events: none;
+}
 
 .temp__value [data-slot="sliding-number-display"],
 .temp__value > [aria-hidden="true"]:not([data-slot]) {
   color: transparent;
   background: linear-gradient(
     to bottom,
-    color-mix(in oklab, var(--ink) 90%, transparent) 0%,
-    color-mix(in oklab, var(--ink) 55%, transparent) 55%,
-    color-mix(in oklab, var(--ink) 30%, transparent) 100%
+    color-mix(in oklab, var(--ink) 96%, transparent) 0%,
+    color-mix(in oklab, var(--ink) 78%, transparent) 60%,
+    color-mix(in oklab, var(--ink) 58%, transparent) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-stroke: 0.012em rgba(255, 255, 255, 0.55);
-}
-.temp__value {
-  filter: drop-shadow(0 0.03em 0.06em color-mix(in oklab, var(--ink) 22%, transparent));
+  -webkit-text-stroke: 0.008em rgba(255, 255, 255, 0.5);
 }

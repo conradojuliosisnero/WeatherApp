@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { toAtmosphereWeather } from "../utils";
+import { toAtmosphereWeather, skyToneFor, SKY_TRANSITION_MS } from "../utils";
 
 /**
  * Cielo realista en WebGL (@takustaqu/atmosphere) detrás de la sección del cielo:
@@ -11,6 +11,7 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
   const canvasRef = useRef(null);
   const skyRef = useRef(null);
   const latestRef = useRef(null);
+  const toneRef = useRef(null);
   const [ready, setReady] = useState(false);
 
   const conditions = data && {
@@ -38,7 +39,11 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
       // latestRef: si los datos llegaron mientras se descargaba el paquete
       skyRef.current = new Atmosphere(canvasRef.current, {
         ...latestRef.current,
-        quality: "balanced",
+        // mismo ritmo que las paletas de CSS y la lluvia/nieve
+        animator: { tau: SKY_TRANSITION_MS / 3000 },
+        // "balanced" dibuja las nubes al 75 % y en pantallas grandes se nota una
+        // trama fina: calidad alta en escritorio, equilibrada en móvil (batería)
+        quality: window.matchMedia("(min-width: 900px)").matches ? "high" : "balanced",
         fps: 30,
         adaptiveResolution: true,
         lens: { droplets: false, flare: 0.35, vignette: false },
@@ -50,7 +55,12 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
         lightProbe: true,
         onLight: (light) => {
           const lum = light.frame?.average.luminance;
-          if (lum != null && !cancelled) onToneChange?.(lum < 0.3 ? "dark" : "light");
+          if (lum == null || cancelled) return;
+          const next = skyToneFor(lum, toneRef.current);
+          if (next !== toneRef.current) {
+            toneRef.current = next;
+            onToneChange?.(next);
+          }
         },
       });
     });

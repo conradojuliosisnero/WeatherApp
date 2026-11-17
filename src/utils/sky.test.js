@@ -34,7 +34,7 @@ test("sin amanecer/atardecer usa el icono para decidir día o noche", () => {
   assert.equal(getSky({ weather: [{ icon: "10d" }], sys: {} }).condition, "rain");
 });
 
-import { toAtmosphereWeather, effectsSceneFor, screenWind } from "./sky.js";
+import { toAtmosphereWeather, effectsSceneFor, screenWind, skyToneFor } from "./sky.js";
 
 const owm = (icon, extra = {}) => ({
   weather: [{ icon }],
@@ -76,4 +76,15 @@ test("el viento del oeste empuja hacia la derecha", () => {
   assert.ok(screenWind({ wind: { speed: 8, deg: 270 } }).x > 0);
   assert.ok(screenWind({ wind: { speed: 8, deg: 90 } }).x < 0);
   assert.equal(screenWind({}).x, 0);
+});
+
+test("el tono del cielo no parpadea cerca del umbral (histéresis)", () => {
+  assert.equal(skyToneFor(0.1), "dark");
+  assert.equal(skyToneFor(0.6), "light");
+  // un destello de rayo (0.32) sobre cielo oscuro no cambia el tono
+  assert.equal(skyToneFor(0.32, "dark"), "dark");
+  assert.equal(skyToneFor(0.28, "light"), "light");
+  // sin tono previo, decide por la mitad
+  assert.equal(skyToneFor(0.29), "dark");
+  assert.equal(skyToneFor(0.31), "light");
 });
