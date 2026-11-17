@@ -854,3 +854,29 @@ button.temp__unit:hover {
 .app[data-sky-tone-low="light"] .sky .temp__unit {
   background: rgba(255, 255, 255, 0.55);
 }
+
+/* Aviso de "instala la app" (dentro del toast) */
+.install {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.install__button {
+  margin-left: 0.3rem;
+  padding: 0.35rem 0.8rem;
+  border: 0;
+  border-radius: 999px;
+  /* el toast ya es del color del texto: el botón va invertido para destacar */
+  background: var(--sky-top);
+  color: var(--ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+.install__close {
+  border: 0;
+  background: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+}

@@ -18,6 +18,7 @@ El clima actual de cualquier ciudad, dibujado como un cielo: el color cambia con
 - **Gotas en la lente** cuando llueve: se forman, resbalan dejando rastro, se juntan y se secan al parar (simulación propia en `src/utils/drops.js`, sin dependencias).
 - Paletas por clima y momento del día (amanecer, día, atardecer, noche) para el suelo, el texto y como respaldo sin WebGL.
 - Todo respeta la preferencia del sistema de reducir movimiento.
+- **Instalable (PWA):** se puede añadir a la pantalla de inicio. Avisa de que es instalable (botón «Instalar» en Chrome, Edge y Android; indicaciones en iPhone) y abre sin conexión con la última página vista.
 
 ## Tecnologías
 
@@ -47,6 +48,8 @@ La API key **nunca llega al navegador**. Vive solo en la variable de entorno `OW
 | `src/app/api/owm.js` | Proxy a OpenWeatherMap con la API key (lo usan `/api/weather` y `/api/forecast`) |
 | `src/utils/forecast.js` | Resumen por día del pronóstico de 3 en 3 horas |
 | `next.config.mjs` | Cabeceras de seguridad (CSP y otras) |
+| `src/app/manifest.js`, `public/sw.js`, `public/icons/` | PWA: manifest, service worker e iconos |
+| `src/components/InstallPrompt.jsx` | Aviso de que la app es instalable |
 
 ## Desarrollo local
 

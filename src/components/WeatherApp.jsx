@@ -30,6 +30,7 @@ import WeatherEffects from "./WeatherEffects";
 import LensDrops from "./LensDrops";
 import Readings from "./Readings";
 import Forecast from "./Forecast";
+import InstallPrompt from "./InstallPrompt";
 import { SKY_ICONS } from "./skyIcons";
 import { CloudSun } from "./icons/cloud-sun";
 import { Sunrise } from "./icons/sunrise";
@@ -109,6 +110,7 @@ export default function WeatherApp() {
           condition={sky.condition}
           darkSky={skyTone ? skyTone === "dark" : sky.phase === "night"}
         />
+        <InstallPrompt />
         <Toaster
           position="bottom-center"
           toastOptions={{ className: "toast", duration: 4000 }}
