@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Search, LoaderCircle } from "lucide-react";
+import { AnimateIcon } from "@animate-ui/react/icons";
+import { RippleButton, RippleButtonRipples } from "@animate-ui/react/primitives/buttons/ripple";
+import { Search } from "./icons/search";
+import { LoaderCircle } from "./icons/loader-circle";
 
 export default function SearchBar({ onSearch, busy }) {
   const [value, setValue] = useState("");
@@ -24,14 +27,18 @@ export default function SearchBar({ onSearch, busy }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      <button
-        className="search__button"
-        type="submit"
-        aria-label="Buscar"
-        disabled={busy}
-      >
-        {busy ? <LoaderCircle className="spin" size={18} /> : <Search size={18} />}
-      </button>
+      <AnimateIcon animateOnHover="find" asChild>
+        <RippleButton
+          className="search__button"
+          type="submit"
+          aria-label="Buscar"
+          disabled={busy}
+          hoverScale={1.06}
+        >
+          {busy ? <LoaderCircle size={18} animate loop /> : <Search size={18} />}
+          <RippleButtonRipples color="var(--sky-top)" />
+        </RippleButton>
+      </AnimateIcon>
     </form>
   );
 }
