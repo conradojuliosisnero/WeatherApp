@@ -11,8 +11,9 @@ export default [
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {
-      globals: { ...globals.browser, ...globals.node, Netlify: "readonly" },
+      globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  { files: ["netlify/**"], languageOptions: { globals: globals.node } },
 ];

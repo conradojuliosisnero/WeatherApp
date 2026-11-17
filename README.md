@@ -53,7 +53,7 @@ npx netlify-cli dev    # sirve la app y la función juntas
 
 `pnpm dev` solo sirve la interfaz: sin la función de Netlify, la búsqueda del clima falla.
 
-Otros comandos: `pnpm build`, `pnpm preview` y `pnpm lint`.
+Otros comandos: `pnpm test`, `pnpm lint`, `pnpm build` y `pnpm preview`.
 
 ## Despliegue en Netlify
 

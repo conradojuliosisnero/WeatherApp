@@ -43,19 +43,16 @@ Este proyecto sigue un código de conducta. Al participar, se espera que respete
 ```
 src/
 ├── components/
-│   ├── UI/              # Componentes reutilizables
-│   └── Feature/         # Componentes específicos
 ├── hooks/               # Custom hooks
-├── services/            # Servicios de API
-├── utils/               # Utilidades
-└── assets/              # Recursos estáticos
+├── services/            # Llamadas a la función de Netlify
+└── utils/               # Utilidades puras (clima, arco, escalas)
+netlify/functions/       # Proxy a OpenWeatherMap (guarda la API key)
 ```
 
 ## 🧪 Testing
 
 - Añade tests para nuevas funcionalidades
-- Mantén la cobertura de tests por encima del 80%
-- Ejecuta `npm test` antes de hacer commit
+- Ejecuta `pnpm test` y `pnpm lint` antes de hacer commit
 
 ## 📦 Commits
 
@@ -112,19 +109,15 @@ Breve descripción del cambio
 
 ```bash
 # Instalar dependencias
-npm install
+pnpm install
 
-# Ejecutar en desarrollo
-npm run dev
+# App + función de Netlify (necesita OWM_API_KEY en .env)
+npx netlify-cli dev
 
-# Ejecutar tests
-npm test
-
-# Verificar linting
-npm run lint
-
-# Build de producción
-npm run build
+# Tests, lint y build
+pnpm test
+pnpm lint
+pnpm build
 ```
 
 ## 📚 Recursos
