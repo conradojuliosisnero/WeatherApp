@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
-import { createWeatherService } from "../services/weatherService";
+import { getWeatherByCity } from "../services/weatherService";
 import { validationUtils } from "../utils";
-
-const weatherService = createWeatherService();
 
 /**
  * Hook para obtener el clima de una ciudad.
@@ -35,7 +33,7 @@ export const useWeather = (initialCity = "Cartagena") => {
       try {
         setLoading(true);
         setError(null);
-        const data = await weatherService.getWeatherByCity(query.city);
+        const data = await getWeatherByCity(query.city);
         if (!cancelled) setWeatherData(data);
       } catch (err) {
         if (cancelled) return;

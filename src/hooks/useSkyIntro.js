@@ -1,13 +1,13 @@
 import { useLayoutEffect } from "react";
 import gsap from "gsap";
-import { arcPoint } from "../components/SunArc";
+import { arcPoint } from "../utils/arc";
 
 /**
  * Secuencia de entrada cada vez que llega una ciudad nueva:
  * el nombre sube letra a letra, la temperatura cuenta hasta su valor
  * y el sol recorre su arco desde el amanecer hasta la hora actual.
  */
-export const useSkyIntro = (scopeRef, key, { progress, temp }) => {
+export const useSkyIntro = (scopeRef, key, { progress }) => {
   useLayoutEffect(() => {
     if (!scopeRef.current || key == null) return;
 
@@ -19,7 +19,7 @@ export const useSkyIntro = (scopeRef, key, { progress, temp }) => {
       const tempEls = scopeRef.current.querySelectorAll(".js-temp");
 
       const sun = { t: 0 };
-      const count = { v: 0 };
+      const count = { p: 0 };
 
       const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
 
@@ -42,13 +42,14 @@ export const useSkyIntro = (scopeRef, key, { progress, temp }) => {
         .to(
           count,
           {
-            v: temp,
+            p: 1,
             duration: 1.8,
             ease: "power4.out",
             onUpdate: () => {
-              const text = String(Math.round(count.v));
-              // Se toca el nodo de texto que React ya controla, sin reemplazarlo
+              // Se toca el nodo de texto que React ya controla, sin reemplazarlo.
+              // El destino sale de data-temp para seguir a la escala si cambia a mitad.
               tempEls.forEach((el) => {
+                const text = String(Math.round(count.p * Number(el.dataset.temp)));
                 if (el.firstChild) el.firstChild.nodeValue = text;
               });
             },

@@ -36,7 +36,6 @@ export default function WeatherApp() {
 
   useSkyIntro(rootRef, data ? `${data.id}-${data.dt}` : null, {
     progress: sky.progress,
-    temp,
   });
 
   // El color de la barra del navegador sigue al cielo
@@ -79,12 +78,12 @@ export default function WeatherApp() {
                   ))}
                 </h1>
                 <p className="place__when js-meta">
-                  {formatLocal(Date.now() / 1000, data.timezone, {
+                  {formatLocal(data.dt, data.timezone, {
                     weekday: "long",
                     day: "numeric",
                     month: "long",
                   })}
-                  , {formatLocal(Date.now() / 1000, data.timezone, {
+                  , {formatLocal(data.dt, data.timezone, {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}{" "}
@@ -94,15 +93,17 @@ export default function WeatherApp() {
                   {textUtils.capitalize(data.weather[0].description)}
                 </p>
                 <p className="place__range js-meta">
-                  <span>Máx {Math.round(convertTemp(data.main.temp_max, scale))}°</span>
-                  <span>Mín {Math.round(convertTemp(data.main.temp_min, scale))}°</span>
+                  <span>Máx {Math.round(convertTemp(data.main.temp_max, scale))}{scale !== "K" && "°"}</span>
+                  <span>Mín {Math.round(convertTemp(data.main.temp_min, scale))}{scale !== "K" && "°"}</span>
                 </p>
               </div>
 
               <SunArc progress={sky.progress} isNight={sky.isNight} />
 
               <div className="temp js-temp-wrap">
-                <span className="temp__value js-temp">{temp}</span>
+                <span className="temp__value js-temp" data-temp={temp}>
+                  {temp}
+                </span>
                 <button
                   type="button"
                   className="temp__unit"
@@ -136,7 +137,9 @@ export default function WeatherApp() {
           {data && (
             <>
               <div className="temp temp--reflection" aria-hidden="true">
-                <span className="temp__value js-temp">{temp}</span>
+                <span className="temp__value js-temp" data-temp={temp}>
+                  {temp}
+                </span>
                 <span className="temp__unit">{scaleSymbol(scale)}</span>
               </div>
 
