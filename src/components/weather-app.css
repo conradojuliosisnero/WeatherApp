@@ -86,28 +86,107 @@
   --p-star: #f8ecd2;
 }
 
-/* Noche: lavanda y periwinkle en vez de negro */
+/* Amanecer: lila arriba, melocotón en el horizonte */
+.app[data-time="dawn"] {
+  --p-top: #cfc6ea;
+  --p-horizon: #ffd6c4;
+  --p-ground: #f7cdc1;
+  --p-deep: #ecb8b0;
+  --p-ink: #33294a;
+  --p-star: #ffc98a;
+}
+.app[data-time="dawn"][data-condition="clouds"],
+.app[data-time="dawn"][data-condition="mist"] {
+  --p-top: #d3cfe3;
+  --p-horizon: #f3dcd6;
+  --p-ground: #e5d3d6;
+  --p-deep: #d6c2c8;
+  --p-ink: #352f4c;
+  --p-star: #fbdcae;
+}
+.app[data-time="dawn"][data-condition="rain"],
+.app[data-time="dawn"][data-condition="storm"] {
+  --p-top: #b9bcd6;
+  --p-horizon: #e5d5da;
+  --p-ground: #cdc6d8;
+  --p-deep: #bbb3ca;
+  --p-ink: #262a42;
+  --p-star: #f1d9b8;
+}
+.app[data-time="dawn"][data-condition="snow"] {
+  --p-top: #dcd9f0;
+  --p-horizon: #fde8e3;
+  --p-ground: #ede8f2;
+  --p-deep: #ded7e8;
+  --p-ink: #2f3550;
+  --p-star: #ffe3bf;
+}
+
+/* Atardecer: periwinkle arriba, albaricoque en el horizonte */
+.app[data-time="dusk"] {
+  --p-top: #a4a3dc;
+  --p-horizon: #ffc49e;
+  --p-ground: #efb6a4;
+  --p-deep: #df9f94;
+  --p-ink: #2a2440;
+  --p-star: #ffb36b;
+}
+.app[data-time="dusk"][data-condition="clouds"],
+.app[data-time="dusk"][data-condition="mist"] {
+  --p-top: #b3b1d0;
+  --p-horizon: #ecc9bc;
+  --p-ground: #d7bdbc;
+  --p-deep: #c7aaae;
+  --p-ink: #2c2840;
+  --p-star: #f7cf9c;
+}
+.app[data-time="dusk"][data-condition="rain"],
+.app[data-time="dusk"][data-condition="storm"] {
+  --p-top: #9d9cbd;
+  --p-horizon: #d6bcc0;
+  --p-ground: #bcb0c0;
+  --p-deep: #a99cae;
+  --p-ink: #211d33;
+  --p-star: #efd0a6;
+}
+.app[data-time="dusk"][data-condition="snow"] {
+  --p-top: #b7b8df;
+  --p-horizon: #f6d4cb;
+  --p-ground: #ddd4e4;
+  --p-deep: #cbbfd7;
+  --p-ink: #272a45;
+  --p-star: #ffd3a6;
+}
+
+/* Noche: lavanda y periwinkle en vez de negro, con contraste suficiente
+   para el texto claro (≥ 4.5:1 arriba y en el suelo) */
 .app[data-time="night"] {
-  --p-top: #555a8e;
-  --p-horizon: #b9a9d8;
-  --p-ground: #8f86ba;
-  --p-deep: #7a72a8;
+  --p-top: #4f5488;
+  --p-horizon: #7a6aa6;
+  --p-ground: #625a92;
+  --p-deep: #544c84;
   --p-ink: #f7f4ff;
   --p-star: #f6efd8;
 }
 .app[data-time="night"][data-condition="clouds"],
 .app[data-time="night"][data-condition="mist"] {
-  --p-top: #62668a;
-  --p-horizon: #b3aac8;
-  --p-ground: #8e88ab;
-  --p-deep: #7c769a;
+  --p-top: #585c80;
+  --p-horizon: #7b7196;
+  --p-ground: #635c84;
+  --p-deep: #564f77;
 }
 .app[data-time="night"][data-condition="rain"],
 .app[data-time="night"][data-condition="storm"] {
-  --p-top: #4b5079;
-  --p-horizon: #9e98bf;
-  --p-ground: #7c78a2;
-  --p-deep: #696590;
+  --p-top: #454a72;
+  --p-horizon: #6c6690;
+  --p-ground: #5a5582;
+  --p-deep: #4d4875;
+}
+.app[data-time="night"][data-condition="snow"] {
+  --p-top: #566091;
+  --p-horizon: #7b7aaa;
+  --p-ground: #655f97;
+  --p-deep: #575189;
 }
 
 /* ------------------------------------------------------------------
