@@ -4,7 +4,7 @@ import { arcPoint } from "../utils/arc";
 
 /**
  * Secuencia de entrada cada vez que llega una ciudad nueva:
- * el nombre sube letra a letra, la temperatura cuenta hasta su valor
+ * el nombre sube letra a letra, la temperatura sube a su sitio
  * y el sol recorre su arco desde el amanecer hasta la hora actual.
  */
 export const useSkyIntro = (scopeRef, key, { progress }) => {
@@ -16,10 +16,8 @@ export const useSkyIntro = (scopeRef, key, { progress }) => {
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       const star = scopeRef.current.querySelector(".js-star");
       const trail = scopeRef.current.querySelector(".js-trail");
-      const tempEls = scopeRef.current.querySelectorAll(".js-temp");
 
       const sun = { t: 0 };
-      const count = { p: 0 };
 
       const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
 
@@ -38,23 +36,6 @@ export const useSkyIntro = (scopeRef, key, { progress }) => {
             },
           },
           0.1
-        )
-        .to(
-          count,
-          {
-            p: 1,
-            duration: 1.8,
-            ease: "power4.out",
-            onUpdate: () => {
-              // Se toca el nodo de texto que React ya controla, sin reemplazarlo.
-              // El destino sale de data-temp para seguir a la escala si cambia a mitad.
-              tempEls.forEach((el) => {
-                const text = String(Math.round(count.p * Number(el.dataset.temp)));
-                if (el.firstChild) el.firstChild.nodeValue = text;
-              });
-            },
-          },
-          0.2
         )
         .from(".js-temp-wrap", { yPercent: 18, duration: 1.6 }, 0.2)
         .from(".js-reading", { autoAlpha: 0, y: 24, duration: 0.9, stagger: 0.06 }, 0.9);
