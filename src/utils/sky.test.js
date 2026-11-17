@@ -43,6 +43,7 @@ import {
   screenWind,
   skyToneFor,
   lensDropletsFor,
+  horizonOf,
 } from "./sky.js";
 
 const owm = (icon, extra = {}) => ({
@@ -113,4 +114,19 @@ test("gotas en la lente solo con lluvia, más cuanto más llueve", () => {
   assert.equal(lensDropletsFor(owm("09d"), "rain"), 0.4);
   assert.equal(lensDropletsFor(owm("10d", { rain: { "1h": 6 } }), "rain"), 0.8);
   assert.equal(lensDropletsFor(owm("11d"), "storm"), 1);
+});
+
+test("el horizonte real sale de la franja inferior de lo que dibuja el cielo", () => {
+  const cell = (v, lum) => ({ srgb: [v, v, v], luminance: lum });
+  // 2 columnas × 3 filas: arriba oscuro, abajo claro
+  const grid = {
+    cols: 2,
+    rows: 3,
+    cells: [cell(0.1, 0.01), cell(0.1, 0.01), cell(0.5, 0.2), cell(0.5, 0.2), cell(0.9, 0.8), cell(0.7, 0.6)],
+  };
+  const h = horizonOf(grid);
+  assert.deepEqual(h.rgb, [204, 204, 204]); // media de la última fila (0.9 y 0.7)
+  assert.ok(Math.abs(h.luminance - 0.45) < 1e-9); // media de las dos últimas filas
+  assert.equal(horizonOf(null), null);
+  assert.equal(horizonOf({ cols: 2, rows: 1, cells: [cell(1, 1), cell(1, 1)] }), null);
 });

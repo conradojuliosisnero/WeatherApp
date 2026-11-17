@@ -3,6 +3,7 @@ import {
   toAtmosphereWeather,
   lensDropletsFor,
   skyToneFor,
+  horizonOf,
   SKY_TRANSITION_MS,
 } from "../utils";
 
@@ -13,11 +14,17 @@ import {
  * las gotas sobre la "lente" sí son de atmosphere, porque deforman el cielo real.
  * Mientras carga, o si no hay WebGL, se ve el degradado pastel de siempre.
  */
-export default function SkyBackdrop({ data, condition, onToneChange }) {
+export default function SkyBackdrop({
+  data,
+  condition,
+  onToneChange,
+  onLowToneChange,
+}) {
   const canvasRef = useRef(null);
   const skyRef = useRef(null);
   const latestRef = useRef(null);
   const toneRef = useRef(null);
+  const lowToneRef = useRef(null);
   const [ready, setReady] = useState(false);
 
   const conditions = data && {
@@ -46,6 +53,7 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
   // Crea el cielo una sola vez; el paquete se descarga después de pintar la página
   useEffect(() => {
     let cancelled = false;
+    const app = canvasRef.current?.closest(".app");
     import("@takustaqu/atmosphere").then(({ Atmosphere }) => {
       if (cancelled || !canvasRef.current) return;
       // latestRef: si los datos llegaron mientras se descargaba el paquete
@@ -79,17 +87,29 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
             toneRef.current = next;
             onToneChange?.(next);
           }
+          // Franja inferior: su color es el horizonte con el que se funden el
+          // cielo y el suelo (sin salto), y su brillo decide el color de la
+          // temperatura y de amanecer/atardecer, que van ahí
+          const h = horizonOf(light.frame?.grid);
+          if (!h) return;
+          app?.style.setProperty("--live-horizon", `rgb(${h.rgb.join(" ")})`);
+          const low = skyToneFor(h.luminance, lowToneRef.current);
+          if (low !== lowToneRef.current) {
+            lowToneRef.current = low;
+            onLowToneChange?.(low);
+          }
         },
       });
     });
     return () => {
       cancelled = true;
+      app?.style.removeProperty("--live-horizon");
       skyRef.current?.dispose();
       skyRef.current = null;
     };
     // Solo al montar (onToneChange es un setState estable): los cambios de ciudad
     // van por sky.set() en el efecto de arriba
-  }, [onToneChange]);
+  }, [onToneChange, onLowToneChange]);
 
   return (
     <canvas

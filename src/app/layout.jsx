@@ -4,7 +4,8 @@ import "../index.css";
 export const metadata = {
   title: "Clima — ConWeatherApp",
   description: "El clima de tu ciudad, en tiempo real.",
-  icons: { icon: "/cloud.svg" },
+  icons: { icon: "/cloud.svg", apple: "/icons/apple-touch-icon.png" },
+  appleWebApp: { capable: true, title: "Clima", statusBarStyle: "default" },
 };
 
 export const viewport = { themeColor: "#BCD6F0" };
