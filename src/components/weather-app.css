@@ -214,7 +214,7 @@
   min-height: 76svh;
   padding: 7.5rem var(--gutter) 0;
   background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-horizon) 100%);
-  overflow: hidden;
+  overflow: clip;
 }
 
 .place {

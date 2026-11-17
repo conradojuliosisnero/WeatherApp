@@ -1,6 +1,6 @@
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import handler from "./weather.js";
+import { GET } from "./route.js";
 
 let called;
 beforeEach(() => {
@@ -12,7 +12,7 @@ beforeEach(() => {
   };
 });
 
-const get = (q) => handler(new Request(`https://x/.netlify/functions/weather?q=${encodeURIComponent(q)}`));
+const get = (q) => GET(new Request(`https://x/api/weather?q=${encodeURIComponent(q)}`));
 
 test("pasa la ciudad intacta y agrega la key solo hacia OpenWeatherMap", async () => {
   const res = await get(" Saint-Lô & Co #2 ");

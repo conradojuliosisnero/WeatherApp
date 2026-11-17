@@ -14,26 +14,27 @@ El clima actual de cualquier ciudad, dibujado como un cielo: el color cambia con
 
 ## Tecnologías
 
-React 19, Vite 8, GSAP, lucide-react y react-hot-toast. Los datos vienen de la [API de OpenWeatherMap](https://openweathermap.org/current) a través de una función de Netlify.
+Next.js 16 (App Router), React 19, GSAP, lucide-react y react-hot-toast. Los datos vienen de la [API de OpenWeatherMap](https://openweathermap.org/current) a través de la ruta `/api/weather` de Next.js.
 
 ## Cómo funciona
 
 ```
-navegador ──> /.netlify/functions/weather?q=Lima ──> api.openweathermap.org
-                (netlify/functions/weather.js)
+navegador ──> /api/weather?q=Lima ──> api.openweathermap.org
+                (src/app/api/weather/route.js)
 ```
 
-La API key **nunca llega al navegador**. Vive solo en la variable de entorno `OWM_API_KEY` de Netlify, y la función la agrega a cada petición.
+La API key **nunca llega al navegador**. Vive solo en la variable de entorno `OWM_API_KEY` del servidor, y la ruta la agrega a cada petición.
 
 | Archivo | Para qué |
 |---|---|
+| `src/app/layout.jsx`, `src/app/page.jsx` | Layout (fuente, metadatos) y la página |
 | `src/components/WeatherApp.jsx` | La pantalla: cielo, temperatura y lecturas |
 | `src/hooks/useWeather.js` | Pide el clima y maneja carga y errores |
 | `src/hooks/useSkyIntro.js` | Animación de entrada |
-| `src/services/weatherService.js` | Llama a la función de Netlify |
+| `src/services/weatherService.js` | Llama a `/api/weather` |
 | `src/utils/sky.js` | Condición, día/noche y posición del sol |
-| `netlify/functions/weather.js` | Proxy a OpenWeatherMap con la API key |
-| `public/_headers` | Cabeceras de seguridad (CSP y otras) |
+| `src/app/api/weather/route.js` | Proxy a OpenWeatherMap con la API key |
+| `next.config.mjs` | Cabeceras de seguridad (CSP y otras) |
 
 ## Desarrollo local
 
@@ -44,20 +45,18 @@ pnpm install
 ```
 
 ```bash
-cp .env.example .env   # y pon tu key en OWM_API_KEY
+cp .env.example .env.local   # y pon tu key en OWM_API_KEY
 ```
 
 ```bash
-npx netlify-cli dev    # sirve la app y la función juntas
+pnpm dev                     # http://localhost:3000
 ```
 
-`pnpm dev` solo sirve la interfaz: sin la función de Netlify, la búsqueda del clima falla.
-
-Otros comandos: `pnpm test`, `pnpm lint`, `pnpm build` y `pnpm preview`.
+Otros comandos: `pnpm test`, `pnpm lint`, `pnpm build` y `pnpm start`.
 
 ## Despliegue en Netlify
 
-1. Conecta el repo. Netlify detecta Vite y la carpeta `netlify/functions`.
+1. Conecta el repo. Netlify detecta Next.js; `netlify.toml` fija el comando y la carpeta de salida.
 2. En *Project configuration → Environment variables*, crea `OWM_API_KEY` con tu key.
 3. Cada push a `main` publica una versión nueva.
 

@@ -6,10 +6,10 @@ const ERRORS = {
   500: "El servicio del clima no está configurado.",
 };
 
-/** Pide el clima a nuestra función de Netlify, que guarda la API key. */
+/** Pide el clima a nuestra ruta /api/weather, que guarda la API key. */
 export async function getWeatherByCity(city) {
   const response = await fetch(
-    `/.netlify/functions/weather?q=${encodeURIComponent(city.trim())}`
+    `/api/weather?q=${encodeURIComponent(city.trim())}`
   );
   if (!response.ok) {
     throw new Error(ERRORS[response.status] ?? `Error del servidor: ${response.status}`);

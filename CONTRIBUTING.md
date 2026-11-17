@@ -42,11 +42,11 @@ Este proyecto sigue un código de conducta. Al participar, se espera que respete
 
 ```
 src/
+├── app/                 # Next.js: layout, página y api/weather (guarda la API key)
 ├── components/
 ├── hooks/               # Custom hooks
 ├── services/            # Llamadas a la función de Netlify
 └── utils/               # Utilidades puras (clima, arco, escalas)
-netlify/functions/       # Proxy a OpenWeatherMap (guarda la API key)
 ```
 
 ## 🧪 Testing
@@ -111,8 +111,8 @@ Breve descripción del cambio
 # Instalar dependencias
 pnpm install
 
-# App + función de Netlify (necesita OWM_API_KEY en .env)
-npx netlify-cli dev
+# App + /api/weather (necesita OWM_API_KEY en .env.local)
+pnpm dev
 
 # Tests, lint y build
 pnpm test
@@ -123,7 +123,7 @@ pnpm build
 ## 📚 Recursos
 
 - [React Documentation](https://reactjs.org/)
-- [Vite Documentation](https://vitejs.dev/)
+- [Next.js Documentation](https://nextjs.org/docs)
 - [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
 - [Clean Code Guidelines](https://github.com/ryanmcdermott/clean-code-javascript)
 
