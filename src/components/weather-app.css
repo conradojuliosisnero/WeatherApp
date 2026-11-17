@@ -479,7 +479,8 @@ button.temp__unit:hover {
   grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
   gap: 2.5rem 2rem;
   max-width: 88rem;
-  margin: clamp(6rem, 13vw, 12rem) auto 0;
+  /* antes dejaba sitio al reflejo del número, que ya no existe */
+  margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
 }
 
 .reading dt {
@@ -574,7 +575,7 @@ button.temp__unit:hover {
   .readings {
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem 1.25rem;
-    margin-top: clamp(6rem, 30vw, 9rem);
+    margin-top: 2.5rem;
   }
 }
 
@@ -644,8 +645,8 @@ button.temp__unit:hover {
 }
 /* El cielo real se funde con el horizonte pastel antes del suelo: sin corte brusco */
 .sky-backdrop {
-  -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
 }
 
 /* Con el cielo real a la vista, el sol y la luna los dibuja él: el arco sobra */
@@ -728,4 +729,77 @@ button.temp__unit:hover {
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Próximos días
+------------------------------------------------------------------- */
+
+.forecast {
+  position: relative;
+  z-index: 1;
+  max-width: 88rem;
+  margin: clamp(3.5rem, 7vw, 6rem) auto 0;
+}
+.forecast__title {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.75;
+}
+.forecast__days {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  max-width: 46rem;
+  gap: clamp(0.4rem, 1.5vw, 1rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.forecast__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.9rem 0.25rem 0.8rem;
+  border-radius: 1.1rem;
+  background: color-mix(in oklab, white 22%, transparent);
+  border: 1px solid color-mix(in oklab, white 45%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+.app[data-time="night"] .forecast__day {
+  background: color-mix(in oklab, white 8%, transparent);
+  border-color: color-mix(in oklab, white 18%, transparent);
+}
+.forecast__weekday {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.forecast__temps {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.forecast__temps strong {
+  font-size: clamp(1.1rem, 2.6vw, 1.5rem);
+  font-weight: 500;
+  font-stretch: 85%;
+}
+.forecast__temps > span {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+.forecast__pop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+.forecast__pop[data-show="false"] {
+  visibility: hidden;
 }

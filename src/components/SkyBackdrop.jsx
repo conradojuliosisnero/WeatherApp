@@ -61,7 +61,12 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
         fps: 30,
         adaptiveResolution: true,
         particles: { precipitation: false },
-        filter: { id: "faded", amount: 0.3 },
+        // Colores vivos: sin filtro de color (el "faded" que había apagaba el
+        // cielo), un polarizador que oscurece el azul y hace saltar las nubes, y
+        // algo más de contraste
+        filter: "none",
+        tone: { contrast: 1.12 },
+        polarizer: { strength: 0.6 },
         onReady: (ok) => !cancelled && setReady(ok),
         // Mide el brillo real del cielo dibujado (~10 veces/s): con cielo oscuro el
         // texto de arriba pasa a claro, aunque la paleta del momento diga otra cosa

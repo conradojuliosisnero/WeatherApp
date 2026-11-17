@@ -10,6 +10,7 @@ El clima actual de cualquier ciudad, dibujado como un cielo: el color cambia con
 - Temperatura en °C, °F o K (toca la unidad para cambiarla).
 - Amanecer y atardecer en la hora local de la ciudad.
 - Sensación térmica, humedad, viento (km/h y dirección), nubosidad, visibilidad y presión.
+- **Próximos días** (hasta 5): cielo, máxima/mínima en la escala elegida y probabilidad de lluvia.
 - Animación de entrada con GSAP: el nombre sube letra a letra y el sol recorre su arco.
 - Microinteracciones con [Animate UI](https://animate-ui.com): iconos animados (cielo, lecturas, amanecer/atardecer, buscador), números que ruedan como un cuentakilómetros al cambiar de ciudad o de escala, ondas al pulsar los botones y brillo en el texto de carga.
 - **Cielo real** con [@takustaqu/atmosphere](https://www.npmjs.com/package/@takustaqu/atmosphere) (WebGL): sol, luna con su fase, estrellas, nubes y rayos según la hora, el lugar y el clima de la búsqueda. El texto pasa a claro u oscuro según el brillo que mide del cielo.
@@ -43,7 +44,8 @@ La API key **nunca llega al navegador**. Vive solo en la variable de entorno `OW
 | `src/components/icons/` | Iconos animados copiados de Animate UI |
 | `src/services/weatherService.js` | Llama a `/api/weather` |
 | `src/utils/sky.js` | Condición, día/noche y posición del sol |
-| `src/app/api/weather/route.js` | Proxy a OpenWeatherMap con la API key |
+| `src/app/api/owm.js` | Proxy a OpenWeatherMap con la API key (lo usan `/api/weather` y `/api/forecast`) |
+| `src/utils/forecast.js` | Resumen por día del pronóstico de 3 en 3 horas |
 | `next.config.mjs` | Cabeceras de seguridad (CSP y otras) |
 
 ## Desarrollo local

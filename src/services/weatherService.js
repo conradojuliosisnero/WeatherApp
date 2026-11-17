@@ -6,13 +6,17 @@ const ERRORS = {
   500: "El servicio del clima no está configurado.",
 };
 
-/** Pide el clima a nuestra ruta /api/weather, que guarda la API key. */
-export async function getWeatherByCity(city) {
-  const response = await fetch(
-    `/api/weather?q=${encodeURIComponent(city.trim())}`
-  );
+/** Pide a nuestras rutas /api/*, que guardan la API key. */
+async function getFromApi(path, city) {
+  const response = await fetch(`/api/${path}?q=${encodeURIComponent(city.trim())}`);
   if (!response.ok) {
     throw new Error(ERRORS[response.status] ?? `Error del servidor: ${response.status}`);
   }
   return response.json();
 }
+
+/** Clima actual. */
+export const getWeatherByCity = (city) => getFromApi("weather", city);
+
+/** Pronóstico de 5 días en tramos de 3 horas. */
+export const getForecastByCity = (city) => getFromApi("forecast", city);

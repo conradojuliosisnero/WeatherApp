@@ -15,6 +15,9 @@ const CONDITION_BY_ICON = {
   50: "mist",
 };
 
+/** Condición del cielo a partir del icono de OpenWeatherMap ("10d" → "rain"). */
+export const conditionOf = (icon = "01d") => CONDITION_BY_ICON[icon.slice(0, 2)] ?? "clear";
+
 const DAY = 86400;
 const MIN = 60;
 // Ventanas de la "hora dorada" alrededor del amanecer y del atardecer
@@ -29,7 +32,7 @@ const clamp01 = (n) => Math.min(1, Math.max(0, n));
  */
 export const getSky = (data, nowSec = Date.now() / 1000) => {
   const icon = data?.weather?.[0]?.icon ?? "01d";
-  const condition = CONDITION_BY_ICON[icon.slice(0, 2)] ?? "clear";
+  const condition = conditionOf(icon);
   const { sunrise, sunset } = data?.sys ?? {};
 
   if (!sunrise || !sunset) {
