@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { useWeather } from "../hooks/useWeather";

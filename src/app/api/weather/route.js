@@ -1,6 +1,6 @@
-// Proxy a OpenWeatherMap: la API key vive solo en el servidor (variable OWM_API_KEY en Netlify).
-export default async (req) => {
-  const city = new URL(req.url).searchParams.get("q")?.trim();
+// Proxy a OpenWeatherMap: la API key vive solo en el servidor (variable OWM_API_KEY).
+export async function GET(request) {
+  const city = new URL(request.url).searchParams.get("q")?.trim();
   if (!city || city.length > 50) {
     return Response.json({ message: "Ciudad inválida" }, { status: 400 });
   }
@@ -12,7 +12,7 @@ export default async (req) => {
 
   const url = new URL("https://api.openweathermap.org/data/2.5/weather");
   url.search = new URLSearchParams({ q: city, appid: key, units: "metric", lang: "es" });
-  const res = await fetch(url);
+  const res = await fetch(url, { cache: "no-store" });
 
   return new Response(res.body, {
     status: res.status,
@@ -22,4 +22,4 @@ export default async (req) => {
       ...(res.ok && { "cache-control": "public, max-age=300" }),
     },
   });
-};
+}
