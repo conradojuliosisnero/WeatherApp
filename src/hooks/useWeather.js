@@ -26,6 +26,13 @@ export const useWeather = (initialCity = "Cartagena") => {
     setQuery((q) => ({ city: q.city, n: q.n + 1 }));
   }, []);
 
+  // Datos al día: OpenWeatherMap actualiza cada ~10 min, y así el cielo, el momento
+  // del día y la paleta avanzan solos mientras la página sigue abierta
+  useEffect(() => {
+    const id = setInterval(handleReload, 10 * 60 * 1000);
+    return () => clearInterval(id);
+  }, [handleReload]);
+
   useEffect(() => {
     let cancelled = false;
 

@@ -6,23 +6,21 @@ import {
   Lightning,
   presets,
 } from "react-weather-effects";
-import { effectsSceneFor, screenWind } from "../utils";
-
-const FADE = 1200;
+import { effectsSceneFor, screenWind, SKY_TRANSITION_MS as FADE } from "../utils";
 
 /**
  * Lluvia, nieve, niebla y rayos a pantalla completa (react-weather-effects), encima
  * de todo y sin capturar clics. Los efectos quedan montados a intensidad 0 para que
  * al cambiar de clima se desvanezcan en vez de cortarse.
  */
-export default function WeatherEffects({ data, condition, isNight }) {
+export default function WeatherEffects({ data, condition, darkSky }) {
   const name = data ? effectsSceneFor(data, condition) : null;
   const scene = name ? presets[name] : {};
-  // Sobre el fondo pastel claro de día, la lluvia clara no se vería
-  const rainColor = isNight
+  // Lluvia clara sobre cielo oscuro y oscura sobre cielo claro, o no se vería
+  const rainColor = darkSky
     ? "rgba(225, 230, 255, 0.55)"
     : "rgba(70, 86, 128, 0.42)";
-  const snowColor = isNight
+  const snowColor = darkSky
     ? "rgba(255, 255, 255, 0.9)"
     : "rgba(255, 255, 255, 0.95)";
 

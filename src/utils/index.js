@@ -20,6 +20,14 @@ export const validationUtils = {
 /**
  * Conversión de temperatura desde Celsius (la API responde con units=metric)
  */
+/**
+ * Duración común de todos los cambios de cielo (paletas, cielo WebGL, lluvia/nieve,
+ * color del texto). El cielo WebGL sigue al nuevo estado con una exponencial de
+ * constante tau = duración / 3 (llega al 95 %); en CSS se usa la curva
+ * cubic-bezier(0.2, 0.6, 0.4, 0.9), ajustada a esa exponencial (error < 0.5 %).
+ */
+export const SKY_TRANSITION_MS = 2400;
+
 export const SCALES = ["C", "F", "K"];
 
 export const convertTemp = (celsius, scale = "C") => {
@@ -30,4 +38,4 @@ export const convertTemp = (celsius, scale = "C") => {
 
 export const scaleSymbol = (scale) => (scale === "K" ? "K" : `°${scale}`);
 
-export { getSky, formatLocal, toAtmosphereWeather, effectsSceneFor, screenWind } from "./sky.js";
+export { getSky, formatLocal, toAtmosphereWeather, effectsSceneFor, screenWind, skyToneFor } from "./sky.js";
