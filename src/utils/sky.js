@@ -141,3 +141,9 @@ export const skyToneFor = (luminance, prev = null) =>
     : luminance > 0.34
       ? "light"
       : (prev ?? (luminance < 0.3 ? "dark" : "light"));
+
+// Gotas en la lente del cielo WebGL: más cuanto más llueve. Es un techo; atmosphere
+// las forma y las seca siguiendo a la lluvia (sin lluvia no aparece ninguna).
+const LENS_DROPLETS = { drizzle: 0.4, rainstorm: 0.8, thunderstorm: 1 };
+export const lensDropletsFor = (data, condition) =>
+  LENS_DROPLETS[effectsSceneFor(data, condition)] ?? 0;

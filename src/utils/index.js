@@ -38,4 +38,4 @@ export const convertTemp = (celsius, scale = "C") => {
 
 export const scaleSymbol = (scale) => (scale === "K" ? "K" : `°${scale}`);
 
-export { getSky, formatLocal, toAtmosphereWeather, effectsSceneFor, screenWind, skyToneFor } from "./sky.js";
+export { getSky, formatLocal, toAtmosphereWeather, effectsSceneFor, screenWind, skyToneFor, lensDropletsFor } from "./sky.js";

@@ -31,10 +31,19 @@ test("a mediodía el sol va por la mitad del arco", () => {
 
 test("sin amanecer/atardecer usa el icono para decidir día o noche", () => {
   assert.equal(getSky({ weather: [{ icon: "10n" }], sys: {} }).phase, "night");
-  assert.equal(getSky({ weather: [{ icon: "10d" }], sys: {} }).condition, "rain");
+  assert.equal(
+    getSky({ weather: [{ icon: "10d" }], sys: {} }).condition,
+    "rain",
+  );
 });
 
-import { toAtmosphereWeather, effectsSceneFor, screenWind, skyToneFor } from "./sky.js";
+import {
+  toAtmosphereWeather,
+  effectsSceneFor,
+  screenWind,
+  skyToneFor,
+  lensDropletsFor,
+} from "./sky.js";
 
 const owm = (icon, extra = {}) => ({
   weather: [{ icon }],
@@ -65,10 +74,19 @@ test("cada clima elige su escena de efectos", () => {
   assert.equal(effectsSceneFor(owm("01d"), "clear"), null);
   assert.equal(effectsSceneFor(owm("04d"), "clouds"), null);
   assert.equal(effectsSceneFor(owm("09d"), "rain"), "drizzle");
-  assert.equal(effectsSceneFor(owm("10d", { rain: { "1h": 6 } }), "rain"), "rainstorm");
+  assert.equal(
+    effectsSceneFor(owm("10d", { rain: { "1h": 6 } }), "rain"),
+    "rainstorm",
+  );
   assert.equal(effectsSceneFor(owm("11d"), "storm"), "thunderstorm");
-  assert.equal(effectsSceneFor(owm("13d", { wind: { speed: 3 } }), "snow"), "snowfall");
-  assert.equal(effectsSceneFor(owm("13d", { wind: { speed: 14 } }), "snow"), "blizzard");
+  assert.equal(
+    effectsSceneFor(owm("13d", { wind: { speed: 3 } }), "snow"),
+    "snowfall",
+  );
+  assert.equal(
+    effectsSceneFor(owm("13d", { wind: { speed: 14 } }), "snow"),
+    "blizzard",
+  );
   assert.equal(effectsSceneFor(owm("50d"), "mist"), "mist");
 });
 
@@ -87,4 +105,12 @@ test("el tono del cielo no parpadea cerca del umbral (histéresis)", () => {
   // sin tono previo, decide por la mitad
   assert.equal(skyToneFor(0.29), "dark");
   assert.equal(skyToneFor(0.31), "light");
+});
+
+test("gotas en la lente solo con lluvia, más cuanto más llueve", () => {
+  assert.equal(lensDropletsFor(owm("01d"), "clear"), 0);
+  assert.equal(lensDropletsFor(owm("13d"), "snow"), 0);
+  assert.equal(lensDropletsFor(owm("09d"), "rain"), 0.4);
+  assert.equal(lensDropletsFor(owm("10d", { rain: { "1h": 6 } }), "rain"), 0.8);
+  assert.equal(lensDropletsFor(owm("11d"), "storm"), 1);
 });
