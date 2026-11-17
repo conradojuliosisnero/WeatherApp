@@ -29,14 +29,9 @@ import SkyBackdrop from "./SkyBackdrop";
 import WeatherEffects from "./WeatherEffects";
 import LensDrops from "./LensDrops";
 import Readings from "./Readings";
-import { Sun } from "./icons/sun";
-import { Moon } from "./icons/moon";
+import Forecast from "./Forecast";
+import { SKY_ICONS } from "./skyIcons";
 import { CloudSun } from "./icons/cloud-sun";
-import { CloudMoon } from "./icons/cloud-moon";
-import { CloudRain } from "./icons/cloud-rain";
-import { CloudLightning } from "./icons/cloud-lightning";
-import { CloudSnow } from "./icons/cloud-snow";
-import { Waves } from "./icons/waves";
 import { Sunrise } from "./icons/sunrise";
 import { Sunset } from "./icons/sunset";
 import { RefreshCw } from "./icons/refresh-cw";
@@ -45,15 +40,6 @@ import "./weather-app.css";
 
 const SCALE_NAMES = { C: "Celsius", F: "Fahrenheit", K: "Kelvin" };
 
-// Icono animado para cada cielo: [día, noche]
-const SKY_ICONS = {
-  clear: [Sun, Moon],
-  clouds: [CloudSun, CloudMoon],
-  rain: [CloudRain, CloudRain],
-  storm: [CloudLightning, CloudLightning],
-  snow: [CloudSnow, CloudSnow],
-  mist: [Waves, Waves],
-};
 const regionNames = new Intl.DisplayNames(["es"], { type: "region" });
 const countryName = (code) => {
   try {
@@ -67,6 +53,7 @@ export default function WeatherApp() {
   const rootRef = useRef(null);
   const {
     weatherData: data,
+    forecast,
     loading,
     error,
     updateCity,
@@ -288,6 +275,7 @@ export default function WeatherApp() {
                 </p>
 
                 <Readings data={data} scale={scale} />
+                <Forecast forecast={forecast} now={data.dt} scale={scale} />
               </>
             )}
 

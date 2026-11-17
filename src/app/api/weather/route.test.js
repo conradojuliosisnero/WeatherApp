@@ -1,6 +1,7 @@
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { GET } from "./route.js";
+import { GET as forecastGET } from "../forecast/route.js";
 
 let called;
 beforeEach(() => {
@@ -34,4 +35,12 @@ test("responde 500 si falta la API key", async () => {
   delete process.env.OWM_API_KEY;
   assert.equal((await get("Lima")).status, 500);
   assert.equal(called, null);
+});
+
+test("/api/forecast usa el pronóstico de OpenWeatherMap con las mismas protecciones", async () => {
+  const res = await forecastGET(new Request("https://x/api/forecast?q=Lima"));
+  assert.equal(res.status, 200);
+  assert.equal(called.pathname, "/data/2.5/forecast");
+  assert.equal(called.searchParams.get("appid"), "KEY");
+  assert.equal((await forecastGET(new Request("https://x/api/forecast?q=%20"))).status, 400);
 });

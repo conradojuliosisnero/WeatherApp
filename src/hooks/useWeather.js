@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
-import { getWeatherByCity } from "../services/weatherService";
+import { getWeatherByCity, getForecastByCity } from "../services/weatherService";
 import { validationUtils } from "../utils";
 
 /**
@@ -9,6 +9,7 @@ import { validationUtils } from "../utils";
  */
 export const useWeather = (initialCity = "Cartagena") => {
   const [weatherData, setWeatherData] = useState(null);
+  const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState({ city: initialCity, n: 0 });
@@ -40,8 +41,15 @@ export const useWeather = (initialCity = "Cartagena") => {
       try {
         setLoading(true);
         setError(null);
-        const data = await getWeatherByCity(query.city);
-        if (!cancelled) setWeatherData(data);
+        // El pronóstico es un extra: si falla, el clima actual se muestra igual
+        const [data, next] = await Promise.all([
+          getWeatherByCity(query.city),
+          getForecastByCity(query.city).catch(() => null),
+        ]);
+        if (!cancelled) {
+          setWeatherData(data);
+          setForecast(next);
+        }
       } catch (err) {
         if (cancelled) return;
         const message = err.message || "No se pudo obtener el clima";
@@ -58,5 +66,5 @@ export const useWeather = (initialCity = "Cartagena") => {
     };
   }, [query]);
 
-  return { weatherData, loading, error, updateCity, handleReload };
+  return { weatherData, forecast, loading, error, updateCity, handleReload };
 };
