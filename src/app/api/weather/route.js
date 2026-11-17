@@ -13,13 +13,15 @@ export async function GET(request) {
   const url = new URL("https://api.openweathermap.org/data/2.5/weather");
   url.search = new URLSearchParams({ q: city, appid: key, units: "metric", lang: "es" });
   const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) console.error(`OpenWeatherMap respondió ${res.status} para "${city}"`);
 
   return new Response(res.body, {
     status: res.status,
     headers: {
       "content-type": "application/json; charset=utf-8",
-      // Reduce llamadas repetidas a la API (el plan gratis limita por minuto)
-      ...(res.ok && { "cache-control": "public, max-age=300" }),
+      // Solo caché del navegador: la CDN de Netlify ignora ?q= en su clave y
+      // devolvía la misma ciudad para cualquier búsqueda.
+      ...(res.ok && { "cache-control": "private, max-age=300" }),
     },
   });
 }

@@ -20,6 +20,8 @@ test("pasa la ciudad intacta y agrega la key solo hacia OpenWeatherMap", async (
   assert.equal(called.searchParams.get("q"), "Saint-Lô & Co #2");
   assert.equal(called.searchParams.get("appid"), "KEY");
   assert.ok(!(await res.text()).includes("KEY"));
+  // "private": la CDN no debe guardar una ciudad y servirla para otra búsqueda
+  assert.equal(res.headers.get("cache-control"), "private, max-age=300");
 });
 
 test("rechaza ciudades vacías o demasiado largas sin llamar a la API", async () => {
