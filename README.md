@@ -10,11 +10,13 @@ El clima actual de cualquier ciudad, dibujado como un cielo: el color cambia con
 - Temperatura en °C, °F o K (toca la unidad para cambiarla).
 - Amanecer y atardecer en la hora local de la ciudad.
 - Sensación térmica, humedad, viento (km/h y dirección), nubosidad, visibilidad y presión.
-- Animación de entrada con GSAP, que se desactiva si el sistema pide menos movimiento.
+- Animación de entrada con GSAP: el nombre sube letra a letra y el sol recorre su arco.
+- Microinteracciones con [Animate UI](https://animate-ui.com): iconos animados (cielo, lecturas, amanecer/atardecer, buscador), números que ruedan como un cuentakilómetros al cambiar de ciudad o de escala, ondas al pulsar los botones y brillo en el texto de carga.
+- Todo respeta la preferencia del sistema de reducir movimiento.
 
 ## Tecnologías
 
-Next.js 16 (App Router), React 19, GSAP, lucide-react y react-hot-toast. Los datos vienen de la [API de OpenWeatherMap](https://openweathermap.org/current) a través de la ruta `/api/weather` de Next.js.
+Next.js 16 (App Router), React 19, GSAP, Motion + Animate UI y react-hot-toast. Los datos vienen de la [API de OpenWeatherMap](https://openweathermap.org/current) a través de la ruta `/api/weather` de Next.js.
 
 ## Cómo funciona
 
@@ -30,7 +32,8 @@ La API key **nunca llega al navegador**. Vive solo en la variable de entorno `OW
 | `src/app/layout.jsx`, `src/app/page.jsx` | Layout (fuente, metadatos) y la página |
 | `src/components/WeatherApp.jsx` | La pantalla: cielo, temperatura y lecturas |
 | `src/hooks/useWeather.js` | Pide el clima y maneja carga y errores |
-| `src/hooks/useSkyIntro.js` | Animación de entrada |
+| `src/hooks/useSkyIntro.js` | Animación de entrada (GSAP) |
+| `src/components/icons/` | Iconos animados copiados de Animate UI |
 | `src/services/weatherService.js` | Llama a `/api/weather` |
 | `src/utils/sky.js` | Condición, día/noche y posición del sol |
 | `src/app/api/weather/route.js` | Proxy a OpenWeatherMap con la API key |

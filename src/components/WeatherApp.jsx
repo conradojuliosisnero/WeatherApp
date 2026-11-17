@@ -2,6 +2,14 @@
 
 import { useRef, useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+import { MotionConfig } from "motion/react";
+import { AnimateIcon } from "@animate-ui/react/icons";
+import { SlidingNumber } from "@animate-ui/react/primitives/texts/sliding-number";
+import { ShimmeringText } from "@animate-ui/react/primitives/texts/shimmering";
+import {
+  RippleButton,
+  RippleButtonRipples,
+} from "@animate-ui/react/primitives/buttons/ripple";
 import { useWeather } from "../hooks/useWeather";
 import { useSkyIntro } from "../hooks/useSkyIntro";
 import {
@@ -15,9 +23,31 @@ import {
 import SearchBar from "./SearchBar";
 import SunArc from "./SunArc";
 import Readings from "./Readings";
+import { Sun } from "./icons/sun";
+import { Moon } from "./icons/moon";
+import { CloudSun } from "./icons/cloud-sun";
+import { CloudMoon } from "./icons/cloud-moon";
+import { CloudRain } from "./icons/cloud-rain";
+import { CloudLightning } from "./icons/cloud-lightning";
+import { CloudSnow } from "./icons/cloud-snow";
+import { Waves } from "./icons/waves";
+import { Sunrise } from "./icons/sunrise";
+import { Sunset } from "./icons/sunset";
+import { RefreshCw } from "./icons/refresh-cw";
+import { Heart } from "./icons/heart";
 import "./weather-app.css";
 
 const SCALE_NAMES = { C: "Celsius", F: "Fahrenheit", K: "Kelvin" };
+
+// Icono animado para cada cielo: [día, noche]
+const SKY_ICONS = {
+  clear: [Sun, Moon],
+  clouds: [CloudSun, CloudMoon],
+  rain: [CloudRain, CloudRain],
+  storm: [CloudLightning, CloudLightning],
+  snow: [CloudSnow, CloudSnow],
+  mist: [Waves, Waves],
+};
 const regionNames = new Intl.DisplayNames(["es"], { type: "region" });
 const countryName = (code) => {
   try {
@@ -29,14 +59,24 @@ const countryName = (code) => {
 
 export default function WeatherApp() {
   const rootRef = useRef(null);
-  const { weatherData: data, loading, error, updateCity, handleReload } =
-    useWeather("Cartagena");
+  const {
+    weatherData: data,
+    loading,
+    error,
+    updateCity,
+    handleReload,
+  } = useWeather("Cartagena");
   const [scale, setScale] = useState("C");
 
-  const sky = data ? getSky(data) : { condition: "clear", isNight: false, progress: 0.5 };
+  const sky = data
+    ? getSky(data)
+    : { condition: "clear", isNight: false, progress: 0.5 };
   const temp = data ? Math.round(convertTemp(data.main.temp, scale)) : null;
+  const introKey = data ? `${data.id}-${data.dt}` : null;
+  const SkyIcon = SKY_ICONS[sky.condition][sky.isNight ? 1 : 0];
+  const degree = scale !== "K" && "°";
 
-  useSkyIntro(rootRef, data ? `${data.id}-${data.dt}` : null, {
+  useSkyIntro(rootRef, introKey, {
     progress: sky.progress,
   });
 
@@ -50,146 +90,220 @@ export default function WeatherApp() {
   const nextScale = SCALES[(SCALES.indexOf(scale) + 1) % SCALES.length];
 
   return (
-    <div
-      ref={rootRef}
-      className="app"
-      data-condition={sky.condition}
-      data-time={sky.isNight ? "night" : "day"}
-      aria-busy={loading}
-    >
-      <Toaster
-        position="bottom-center"
-        toastOptions={{ className: "toast", duration: 4000 }}
-      />
+    <MotionConfig reducedMotion="user">
+      <div
+        ref={rootRef}
+        className="app"
+        data-condition={sky.condition}
+        data-time={sky.isNight ? "night" : "day"}
+        aria-busy={loading}
+      >
+        <Toaster
+          position="bottom-center"
+          toastOptions={{ className: "toast", duration: 4000 }}
+        />
 
-      <header className="topbar">
-        <p className="wordmark">Clima</p>
-        <SearchBar onSearch={updateCity} busy={loading} />
-      </header>
+        <header className="topbar">
+          <AnimateIcon animateOnHover asChild>
+            <p className="wordmark">
+              <CloudSun size={22} aria-hidden="true" />
+              Clima
+            </p>
+          </AnimateIcon>
+          <SearchBar onSearch={updateCity} busy={loading} />
+        </header>
 
-      <main>
-        <section className="sky" aria-label="Clima actual">
-          {data ? (
-            <>
-              <div className="place">
-                <h1 className="place__city" aria-label={data.name}>
-                  {[...data.name].map((ch, i) => (
-                    <span className="char-mask" key={i} aria-hidden="true">
-                      <span className="js-char">{ch === " " ? " " : ch}</span>
-                    </span>
-                  ))}
-                </h1>
-                <p className="place__when js-meta">
-                  {formatLocal(data.dt, data.timezone, {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                  })}
-                  , {formatLocal(data.dt, data.timezone, {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}{" "}
-                  en {countryName(data.sys.country)}
-                </p>
-                <p className="place__sky js-meta">
-                  {textUtils.capitalize(data.weather[0].description)}
-                </p>
-                <p className="place__range js-meta">
-                  <span>Máx {Math.round(convertTemp(data.main.temp_max, scale))}{scale !== "K" && "°"}</span>
-                  <span>Mín {Math.round(convertTemp(data.main.temp_min, scale))}{scale !== "K" && "°"}</span>
-                </p>
-              </div>
-
-              <SunArc progress={sky.progress} isNight={sky.isNight} />
-
-              <div className="temp js-temp-wrap">
-                <span className="temp__value js-temp" data-temp={temp}>
-                  {temp}
-                </span>
-                <button
-                  type="button"
-                  className="temp__unit"
-                  onClick={() => setScale(nextScale)}
-                  aria-label={`Temperatura en ${SCALE_NAMES[scale]}. Cambiar a ${SCALE_NAMES[nextScale]}`}
-                >
-                  {scaleSymbol(scale)}
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="place place--empty">
-              {error ? (
-                <>
-                  <h1 className="place__city place__city--small">
-                    No hay datos del clima
+        <main>
+          <section className="sky" aria-label="Clima actual">
+            {data ? (
+              <>
+                <div className="place">
+                  <h1 className="place__city" aria-label={data.name}>
+                    {[...data.name].map((ch, i) => (
+                      <span className="char-mask" key={i} aria-hidden="true">
+                        <span className="js-char">{ch === " " ? " " : ch}</span>
+                      </span>
+                    ))}
                   </h1>
-                  <p className="place__sky">{error}</p>
-                  <button type="button" className="retry" onClick={handleReload}>
-                    Reintentar
-                  </button>
-                </>
-              ) : (
-                <p className="place__sky loading-text">Mirando el cielo de Cartagena…</p>
-              )}
-            </div>
-          )}
-        </section>
+                  <p className="place__when js-meta">
+                    {formatLocal(data.dt, data.timezone, {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                    })}
+                    ,{" "}
+                    {formatLocal(data.dt, data.timezone, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}{" "}
+                    en {countryName(data.sys.country)}
+                  </p>
+                  <AnimateIcon animateOnHover animateOnTap asChild>
+                    <p className="place__sky js-meta">
+                      <SkyIcon
+                        key={introKey}
+                        size={28}
+                        animateOnView
+                        aria-hidden="true"
+                      />
+                      {textUtils.capitalize(data.weather[0].description)}
+                    </p>
+                  </AnimateIcon>
+                  <p className="place__range js-meta">
+                    <span>
+                      Máx{" "}
+                      <SlidingNumber
+                        number={Math.round(
+                          convertTemp(data.main.temp_max, scale),
+                        )}
+                      />
+                      {degree}
+                    </span>
+                    <span>
+                      Mín{" "}
+                      <SlidingNumber
+                        number={Math.round(
+                          convertTemp(data.main.temp_min, scale),
+                        )}
+                      />
+                      {degree}
+                    </span>
+                  </p>
+                </div>
 
-        <section className="ground">
-          {data && (
-            <>
-              <div className="temp temp--reflection" aria-hidden="true">
-                <span className="temp__value js-temp" data-temp={temp}>
-                  {temp}
-                </span>
-                <span className="temp__unit">{scaleSymbol(scale)}</span>
+                <SunArc progress={sky.progress} isNight={sky.isNight} />
+
+                <div className="temp js-temp-wrap">
+                  <SlidingNumber
+                    key={introKey}
+                    className="temp__value"
+                    number={temp}
+                   
+                  />
+                  <RippleButton
+                    type="button"
+                    className="temp__unit"
+                    onClick={() => setScale(nextScale)}
+                    aria-label={`Temperatura en ${SCALE_NAMES[scale]}. Cambiar a ${SCALE_NAMES[nextScale]}`}
+                    hoverScale={1.08}
+                  >
+                    {scaleSymbol(scale)}
+                    <RippleButtonRipples color="var(--ink)" />
+                  </RippleButton>
+                </div>
+              </>
+            ) : (
+              <div className="place place--empty">
+                {error ? (
+                  <>
+                    <h1 className="place__city place__city--small">
+                      No hay datos del clima
+                    </h1>
+                    <p className="place__sky">{error}</p>
+                    <AnimateIcon animateOnHover animateOnTap asChild>
+                      <RippleButton
+                        type="button"
+                        className="retry"
+                        onClick={handleReload}
+                        hoverScale={1.04}
+                      >
+                        <RefreshCw size={18} aria-hidden="true" />
+                        Reintentar
+                        <RippleButtonRipples color="var(--sky-top)" />
+                      </RippleButton>
+                    </AnimateIcon>
+                  </>
+                ) : (
+                  <p className="place__sky">
+                    <ShimmeringText
+                      text="Mirando el cielo de Cartagena…"
+                      color="color-mix(in oklab, var(--ink) 55%, transparent)"
+                      shimmeringColor="var(--ink)"
+                    />
+                  </p>
+                )}
               </div>
+            )}
+          </section>
 
-              <p className="sun-times js-meta">
-                <span>
-                  Amanecer{" "}
-                  <strong>
-                    {formatLocal(data.sys.sunrise, data.timezone, {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </strong>
-                </span>
-                <span>
-                  Atardecer{" "}
-                  <strong>
-                    {formatLocal(data.sys.sunset, data.timezone, {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </strong>
-                </span>
+          <section className="ground">
+            {data && (
+              <>
+                <div className="temp temp--reflection" aria-hidden="true">
+                  <SlidingNumber
+                    key={introKey}
+                    className="temp__value"
+                    number={temp}
+                   
+                  />
+                  <span className="temp__unit">{scaleSymbol(scale)}</span>
+                </div>
+
+                <p className="sun-times js-meta">
+                  <span>
+                    <Sunrise
+                      size={18}
+                      animateOnView
+                      animateOnHover
+                      aria-hidden="true"
+                    />
+                    Amanecer{" "}
+                    <strong>
+                      {formatLocal(data.sys.sunrise, data.timezone, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </strong>
+                  </span>
+                  <span>
+                    <Sunset
+                      size={18}
+                      animateOnView
+                      animateOnHover
+                      aria-hidden="true"
+                    />
+                    Atardecer{" "}
+                    <strong>
+                      {formatLocal(data.sys.sunset, data.timezone, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </strong>
+                  </span>
+                </p>
+
+                <Readings data={data} scale={scale} />
+              </>
+            )}
+
+            <footer className="footer">
+              <p>
+                Datos de{" "}
+                <a
+                  href="https://openweathermap.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  OpenWeatherMap
+                </a>
               </p>
-
-              <Readings data={data} scale={scale} />
-            </>
-          )}
-
-          <footer className="footer">
-            <p>
-              Datos de{" "}
-              <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">
-                OpenWeatherMap
-              </a>
-            </p>
-            <p>
-              Hecho por{" "}
-              <a
-                href="https://github.com/conradojuliosisnero"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ConradoJulio
-              </a>
-            </p>
-          </footer>
-        </section>
-      </main>
-    </div>
+              <AnimateIcon animateOnHover asChild>
+                <p>
+                  Hecho con{" "}
+                  <Heart size={14} animation="fill" aria-label="amor" /> por{" "}
+                  <a
+                    href="https://github.com/conradojuliosisnero"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    ConradoJulio
+                  </a>
+                </p>
+              </AnimateIcon>
+            </footer>
+          </section>
+        </main>
+      </div>
+    </MotionConfig>
   );
 }

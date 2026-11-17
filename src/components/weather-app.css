@@ -184,26 +184,11 @@
   background: var(--ink);
   color: var(--sky-top);
   cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.search__button:hover {
-  transform: scale(1.06);
-}
-.search__button:active {
-  transform: scale(0.94);
 }
 .search__button:disabled {
   cursor: progress;
 }
 
-.spin {
-  animation: spin 0.9s linear infinite;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 /* ------------------------------------------------------------------
    Cielo
@@ -272,14 +257,6 @@
 
 .place--empty {
   padding-top: 4rem;
-}
-.loading-text {
-  animation: breathe 1.8s ease-in-out infinite;
-}
-@keyframes breathe {
-  50% {
-    opacity: 0.45;
-  }
 }
 
 .retry {
@@ -370,15 +347,10 @@
   letter-spacing: 0;
   line-height: 1;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  transition: background 0.2s ease;
 }
 button.temp__unit:hover {
   background: color-mix(in oklab, var(--ink) 10%, transparent);
-}
-button.temp__unit:active {
-  transform: scale(0.94);
 }
 
 .ground {
@@ -525,4 +497,46 @@ button.temp__unit:active {
     gap: 2rem 1.25rem;
     margin-top: clamp(6rem, 30vw, 9rem);
   }
+}
+
+/* ------------------------------------------------------------------
+   Iconos animados (Animate UI)
+------------------------------------------------------------------- */
+
+.wordmark,
+.place__sky,
+.reading dt,
+.sun-times span,
+.retry,
+.footer p {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.reading dt {
+  display: flex;
+}
+.footer p {
+  gap: 0.3em;
+}
+.footer svg {
+  color: var(--ink);
+}
+.place__sky svg {
+  flex: none;
+}
+.wind-arrow {
+  display: inline-flex;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* SlidingNumber fija line-height: 1 en línea; la temperatura grande usa
+   el interlineado apretado del diseño para que la unidad quede alineada. */
+.temp__value [data-slot="sliding-number-roller"] {
+  line-height: inherit !important;
+  /* cada rueda mide 1ch e ignora el letter-spacing: se lo restamos */
+  width: calc(1ch - 0.05em) !important;
+}
+/* El signo menos de SlidingNumber trae un margen fijo de 0.25rem: lo pegamos al número */
+[data-slot="sliding-number"] > [aria-hidden="true"]:not([data-slot]) {
+  margin-right: 0.04em !important;
 }
