@@ -14,6 +14,9 @@ importers:
       '@fontsource-variable/bricolage-grotesque':
         specifier: ^5.3.0
         version: 5.3.0
+      '@takustaqu/atmosphere':
+        specifier: ^0.13.1
+        version: 0.13.1(react@19.3.1)
       gsap:
         specifier: ^3.15.1
         version: 3.15.1
@@ -32,6 +35,9 @@ importers:
       react-hot-toast:
         specifier: ^2.6.1
         version: 2.6.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      react-weather-effects:
+        specifier: ^0.2.0
+        version: 0.2.0(react@19.3.1)
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -462,6 +468,15 @@ packages:
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
+  '@takustaqu/atmosphere@0.13.1':
+    resolution: {integrity: sha512-TLbE4TzdZrFdwBvjntBwg/ddwIcDbC9XR9ZGfOm6w4pZWfsVBWRTLr7/UTOk48b3vwrC1YdGPfCfLgzZfl5bsA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=18'
+    peerDependenciesMeta:
+      react:
+        optional: true
+
   '@types/esrecurse@4.3.1':
     resolution: {integrity: sha512-xJBAbDifo5hpffDBuHl0Y8ywswbiAp/Wi7Y/GtAgSlZyIABppyurxVueOPE8LUQOxdlgi6Zqce7uoEpqNTeiUw==}
 
@@ -848,6 +863,11 @@ packages:
         optional: true
       '@types/react-dom':
         optional: true
+
+  react-weather-effects@0.2.0:
+    resolution: {integrity: sha512-RzV79W6l8u5lKnLFtKX/OAdy5dy9TCNCmcmyrFA+dDnlOKfZ4fbPvM6+KWfFEWoLcaY/wd4oMNNGq70NxSVyrg==}
+    peerDependencies:
+      react: '>=18'
 
   react@19.3.1:
     resolution: {integrity: sha512-QNhWdt7nrgVWWQG58QuGsAR3jv3Hbe4mb4vz7w2csnHavciZJgda1CPNaldF6eVxv90ud3jUXpKlHL69gO38yw==}
@@ -1285,6 +1305,10 @@ snapshots:
     dependencies:
       tslib: 2.9.1
 
+  '@takustaqu/atmosphere@0.13.1(react@19.3.1)':
+    optionalDependencies:
+      react: 19.3.1
+
   '@types/esrecurse@4.3.1': {}
 
   '@types/estree@1.0.8': {}
@@ -1644,6 +1668,10 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
       '@types/react-dom': 19.3.0(@types/react@19.3.0)
+
+  react-weather-effects@0.2.0(react@19.3.1):
+    dependencies:
+      react: 19.3.1
 
   react@19.3.1: {}
 

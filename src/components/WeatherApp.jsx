@@ -22,6 +22,8 @@ import {
 } from "../utils";
 import SearchBar from "./SearchBar";
 import SunArc from "./SunArc";
+import SkyBackdrop from "./SkyBackdrop";
+import WeatherEffects from "./WeatherEffects";
 import Readings from "./Readings";
 import { Sun } from "./icons/sun";
 import { Moon } from "./icons/moon";
@@ -67,6 +69,8 @@ export default function WeatherApp() {
     handleReload,
   } = useWeather("Cartagena");
   const [scale, setScale] = useState("C");
+  // Brillo del cielo WebGL: null hasta que lo mide (se usa la paleta)
+  const [skyTone, setSkyTone] = useState(null);
 
   const sky = data
     ? getSky(data)
@@ -96,8 +100,14 @@ export default function WeatherApp() {
         className="app"
         data-condition={sky.condition}
         data-time={sky.phase}
+      data-sky-tone={skyTone ?? undefined}
         aria-busy={loading}
       >
+        <WeatherEffects
+          data={data}
+          condition={sky.condition}
+          isNight={sky.phase === "night"}
+        />
         <Toaster
           position="bottom-center"
           toastOptions={{ className: "toast", duration: 4000 }}
@@ -115,6 +125,11 @@ export default function WeatherApp() {
 
         <main>
           <section className="sky" aria-label="Clima actual">
+            <SkyBackdrop
+            data={data}
+            condition={sky.condition}
+            onToneChange={setSkyTone}
+          />
             {data ? (
               <>
                 <div className="place">
@@ -178,7 +193,6 @@ export default function WeatherApp() {
                     key={introKey}
                     className="temp__value"
                     number={temp}
-                   
                   />
                   <RippleButton
                     type="button"
@@ -229,16 +243,6 @@ export default function WeatherApp() {
           <section className="ground">
             {data && (
               <>
-                <div className="temp temp--reflection" aria-hidden="true">
-                  <SlidingNumber
-                    key={introKey}
-                    className="temp__value"
-                    number={temp}
-                   
-                  />
-                  <span className="temp__unit">{scaleSymbol(scale)}</span>
-                </div>
-
                 <p className="sun-times js-meta">
                   <span>
                     <Sunrise
