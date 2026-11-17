@@ -559,12 +559,14 @@ button.temp__unit:hover {
   .topbar {
     padding-top: 1.1rem;
   }
+  /* En móvil la temperatura sigue siendo lo más grande, pero sin tapar el resto:
+     el cielo es más bajo y las lecturas quedan a la vista sin hacer scroll */
   .sky {
-    min-height: 74svh;
+    min-height: 58svh;
     padding-top: 6rem;
   }
   .app {
-    --temp-size: clamp(10rem, 80vw, 20rem);
+    --temp-size: clamp(7rem, 40vw, 9.5rem);
   }
   .place__city {
     font-size: clamp(3.25rem, 15vw, 4.5rem);
