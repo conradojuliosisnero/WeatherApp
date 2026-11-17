@@ -10,6 +10,9 @@
 @property --ground-deep { syntax: "<color>"; inherits: true; initial-value: #e9b9a6; }
 @property --ink { syntax: "<color>"; inherits: true; initial-value: #2e3150; }
 @property --star { syntax: "<color>"; inherits: true; initial-value: #ffd27a; }
+/* Color real de la franja inferior del cielo WebGL (lo pone SkyBackdrop); sin
+   WebGL se queda en el horizonte de la paleta */
+@property --live-horizon { syntax: "<color>"; inherits: true; initial-value: #fce3cf; }
 
 .app {
   /* despejado de día */
@@ -26,6 +29,7 @@
   --ground-deep: var(--p-deep);
   --ink: var(--p-ink);
   --star: var(--p-star);
+  --live-horizon: var(--sky-horizon);
 
   --gutter: clamp(1.25rem, 4vw, 4rem);
   --temp-size: clamp(9.5rem, 31vw, 27rem);
@@ -40,7 +44,8 @@
     --ground var(--sync) var(--sync-ease),
     --ground-deep var(--sync) var(--sync-ease),
     --ink var(--sync) var(--sync-ease),
-    --star var(--sync) var(--sync-ease);
+    --star var(--sync) var(--sync-ease),
+    --live-horizon var(--sync) var(--sync-ease);
 
   min-height: 100svh;
   color: var(--ink);
@@ -285,7 +290,7 @@
   position: relative;
   min-height: 76svh;
   padding: 7.5rem var(--gutter) 0;
-  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-horizon) 100%);
+  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--live-horizon) 100%);
   overflow: clip;
 }
 
@@ -445,8 +450,8 @@ button.temp__unit:hover {
   /* empieza con el color del horizonte: sin línea dura entre cielo y suelo */
   background: linear-gradient(
     to bottom,
-    var(--sky-horizon) 0%,
-    var(--ground) 30%,
+    var(--live-horizon) 0%,
+    var(--ground) 14%,
     var(--ground-deep) 100%
   );
   overflow: hidden;
@@ -486,7 +491,7 @@ button.temp__unit:hover {
 .reading dt {
   font-size: 0.95rem;
   font-weight: 500;
-  opacity: 0.75;
+  opacity: 0.95;
 }
 
 .reading dd {
@@ -510,7 +515,7 @@ button.temp__unit:hover {
   align-items: center;
   gap: 0.35rem;
   font-size: 0.9rem;
-  opacity: 0.75;
+  opacity: 0.9;
 }
 
 .meter {
@@ -538,7 +543,7 @@ button.temp__unit:hover {
   max-width: 88rem;
   margin: 5rem auto 0;
   font-size: 0.9rem;
-  opacity: 0.75;
+  opacity: 0.9;
 }
 .footer a {
   text-underline-offset: 0.2em;
@@ -647,8 +652,8 @@ button.temp__unit:hover {
 }
 /* El cielo real se funde con el horizonte pastel antes del suelo: sin corte brusco */
 .sky-backdrop {
-  -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
 }
 
 /* Con el cielo real a la vista, el sol y la luna los dibuja él: el arco sobra */
@@ -688,16 +693,8 @@ button.temp__unit:hover {
   /* a la derecha, sin salir de la pantalla en móvil */
   inset: -0.07em -0.04em -0.02em -0.07em;
   border-radius: 0.11em 0.11em 0 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.22),
-    rgba(255, 255, 255, 0.06)
-  );
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-bottom: 0;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 0.04em 0.12em rgba(20, 22, 45, 0.12);
+  /* solo el vidrio esmerilado: sin borde ni sombras */
+  background: rgba(255, 255, 255, 0.06);
   -webkit-backdrop-filter: blur(18px) saturate(150%);
   backdrop-filter: blur(18px) saturate(150%);
   pointer-events: none;
@@ -709,8 +706,8 @@ button.temp__unit:hover {
   background: linear-gradient(
     to bottom,
     color-mix(in oklab, var(--ink) 96%, transparent) 0%,
-    color-mix(in oklab, var(--ink) 78%, transparent) 60%,
-    color-mix(in oklab, var(--ink) 58%, transparent) 100%
+    color-mix(in oklab, var(--ink) 84%, transparent) 60%,
+    color-mix(in oklab, var(--ink) 72%, transparent) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -747,7 +744,7 @@ button.temp__unit:hover {
   margin: 0 0 1rem;
   font-size: 0.95rem;
   font-weight: 500;
-  opacity: 0.75;
+  opacity: 0.9;
 }
 .forecast__days {
   display: grid;
@@ -792,7 +789,7 @@ button.temp__unit:hover {
 }
 .forecast__temps > span {
   font-size: 0.85rem;
-  opacity: 0.7;
+  opacity: 0.95;
 }
 .forecast__pop {
   display: inline-flex;
@@ -800,8 +797,60 @@ button.temp__unit:hover {
   gap: 0.2em;
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 .forecast__pop[data-show="false"] {
   visibility: hidden;
+}
+
+/* ------------------------------------------------------------------
+   Contraste sobre el cielo real
+------------------------------------------------------------------- */
+
+/* La temperatura y amanecer/atardecer están en la franja inferior: su color
+   depende del brillo de esa franja, no de la media del cielo */
+.app[data-sky-tone-low="dark"] :is(.sky .temp, .sun-times) {
+  --ink: #f7f4ff;
+  color: var(--ink);
+}
+.app[data-sky-tone-low="light"] :is(.sky .temp, .sun-times) {
+  --ink: #232640;
+  color: var(--ink);
+}
+/* Amanecer/atardecer caen donde el suelo pasa del horizonte real a la paleta:
+   un halo del color contrario los mantiene legibles sobre ese tramo */
+.app[data-sky-tone-low="dark"] .sun-times {
+  text-shadow: 0 0 6px rgba(12, 14, 34, 0.55), 0 0 2px rgba(12, 14, 34, 0.4);
+}
+.app[data-sky-tone-low="light"] .sun-times {
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.6), 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Velo detrás del texto de arriba: si pasa una nube clara tras un texto claro
+   (o un hueco oscuro tras uno oscuro), el texto se sigue leyendo */
+@property --scrim { syntax: "<color>"; inherits: false; initial-value: transparent; }
+.app[data-sky-tone] .sky::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 auto;
+  height: 78%;
+  background: linear-gradient(to bottom, var(--scrim) 0%, var(--scrim) 50%, transparent 100%);
+  transition: --scrim var(--sync) var(--sync-ease);
+  pointer-events: none;
+}
+.app[data-sky-tone="dark"] .sky::before {
+  --scrim: rgba(12, 14, 34, 0.42);
+}
+.app[data-sky-tone="light"] .sky::before {
+  --scrim: rgba(255, 255, 255, 0.45);
+}
+
+/* "°C" es pequeño y va sobre la franja que cambia de color: píldora con fondo
+   del color contrario para que siempre se lea */
+.app[data-sky-tone-low="dark"] .sky .temp__unit {
+  background: rgba(12, 14, 34, 0.38);
+}
+.app[data-sky-tone-low="light"] .sky .temp__unit {
+  background: rgba(255, 255, 255, 0.55);
 }

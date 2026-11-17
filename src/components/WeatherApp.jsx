@@ -62,6 +62,8 @@ export default function WeatherApp() {
   const [scale, setScale] = useState("C");
   // Brillo del cielo WebGL: null hasta que lo mide (se usa la paleta)
   const [skyTone, setSkyTone] = useState(null);
+  // Brillo de la franja inferior del cielo (temperatura, amanecer/atardecer)
+  const [lowTone, setLowTone] = useState(null);
 
   const sky = data
     ? getSky(data)
@@ -94,6 +96,7 @@ export default function WeatherApp() {
         data-condition={sky.condition}
         data-time={sky.phase}
         data-sky-tone={skyTone ?? undefined}
+        data-sky-tone-low={lowTone ?? undefined}
         style={{ "--sync": `${SKY_TRANSITION_MS}ms` }}
         aria-busy={loading}
       >
@@ -127,6 +130,7 @@ export default function WeatherApp() {
               data={data}
               condition={sky.condition}
               onToneChange={setSkyTone}
+              onLowToneChange={setLowTone}
             />
             {data ? (
               <>

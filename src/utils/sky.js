@@ -150,3 +150,22 @@ export const skyToneFor = (luminance, prev = null) =>
 const LENS_DROPLETS = { drizzle: 0.4, rainstorm: 0.8, thunderstorm: 1 };
 export const lensDropletsFor = (data, condition) =>
   LENS_DROPLETS[effectsSceneFor(data, condition)] ?? 0;
+
+/**
+ * Lo que mide el cielo WebGL en su franja inferior (cuadrícula de lightProbe,
+ * celdas desde arriba a la izquierda): el color de la última fila, con el que se
+ * funde con el suelo, y el brillo de las dos últimas, donde va la temperatura.
+ * @param {{ cols: number, rows: number, cells: { srgb: number[], luminance: number }[] }} grid
+ * @returns {{ rgb: number[], luminance: number } | null} rgb en 0..255
+ */
+export const horizonOf = (grid) => {
+  if (!grid?.cells?.length || grid.rows < 2) return null;
+  const { cols, rows, cells } = grid;
+  const last = cells.slice((rows - 1) * cols);
+  const lower = cells.slice((rows - 2) * cols);
+  const avg = (list, f) => list.reduce((s, c) => s + f(c), 0) / list.length;
+  return {
+    rgb: [0, 1, 2].map((i) => Math.round(avg(last, (c) => c.srgb[i]) * 255)),
+    luminance: avg(lower, (c) => c.luminance),
+  };
+};

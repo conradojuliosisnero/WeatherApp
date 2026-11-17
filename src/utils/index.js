@@ -49,4 +49,5 @@ export {
   screenWind,
   skyToneFor,
   lensDropletsFor,
+  horizonOf,
 } from "./sky.js";
