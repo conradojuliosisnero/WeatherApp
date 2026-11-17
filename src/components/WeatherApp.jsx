@@ -18,6 +18,8 @@ import {
   scaleSymbol,
   textUtils,
   SKY_TRANSITION_MS,
+  lensDropletsFor,
+  screenWind,
   getSky,
   formatLocal,
 } from "../utils";
@@ -25,6 +27,7 @@ import SearchBar from "./SearchBar";
 import SunArc from "./SunArc";
 import SkyBackdrop from "./SkyBackdrop";
 import WeatherEffects from "./WeatherEffects";
+import LensDrops from "./LensDrops";
 import Readings from "./Readings";
 import { Sun } from "./icons/sun";
 import { Moon } from "./icons/moon";
@@ -103,10 +106,14 @@ export default function WeatherApp() {
         className="app"
         data-condition={sky.condition}
         data-time={sky.phase}
-      data-sky-tone={skyTone ?? undefined}
-      style={{ "--sync": `${SKY_TRANSITION_MS}ms` }}
+        data-sky-tone={skyTone ?? undefined}
+        style={{ "--sync": `${SKY_TRANSITION_MS}ms` }}
         aria-busy={loading}
       >
+        <LensDrops
+          amount={data ? lensDropletsFor(data, sky.condition) : 0}
+          wind={data ? screenWind(data).x : 0}
+        />
         <WeatherEffects
           data={data}
           condition={sky.condition}
@@ -130,10 +137,10 @@ export default function WeatherApp() {
         <main>
           <section className="sky" aria-label="Clima actual">
             <SkyBackdrop
-            data={data}
-            condition={sky.condition}
-            onToneChange={setSkyTone}
-          />
+              data={data}
+              condition={sky.condition}
+              onToneChange={setSkyTone}
+            />
             {data ? (
               <>
                 <div className="place">

@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { toAtmosphereWeather, skyToneFor, SKY_TRANSITION_MS } from "../utils";
+import {
+  toAtmosphereWeather,
+  lensDropletsFor,
+  skyToneFor,
+  SKY_TRANSITION_MS,
+} from "../utils";
 
 /**
  * Cielo realista en WebGL (@takustaqu/atmosphere) detrás de la sección del cielo:
  * sol, luna con su fase, estrellas, nubes y rayos según la hora, el lugar y el clima.
- * Lo que cae (lluvia, nieve) lo dibuja WeatherEffects por encima, así que aquí va apagado.
+ * Lo que cae (lluvia, nieve) lo dibuja WeatherEffects por encima, así que aquí va apagado;
+ * las gotas sobre la "lente" sí son de atmosphere, porque deforman el cielo real.
  * Mientras carga, o si no hay WebGL, se ve el degradado pastel de siempre.
  */
 export default function SkyBackdrop({ data, condition, onToneChange }) {
@@ -21,6 +27,12 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
       longitude: data.coord?.lon ?? 0,
     },
     weather: toAtmosphereWeather(data, condition),
+    // Gotas que se forman, resbalan y se secan sobre la "lente" mientras llueve
+    lens: {
+      droplets: lensDropletsFor(data, condition),
+      flare: 0.35,
+      vignette: false,
+    },
   };
 
   // Cambio de ciudad o de medición: transición suave al nuevo cielo
@@ -43,10 +55,11 @@ export default function SkyBackdrop({ data, condition, onToneChange }) {
         animator: { tau: SKY_TRANSITION_MS / 3000 },
         // "balanced" dibuja las nubes al 75 % y en pantallas grandes se nota una
         // trama fina: calidad alta en escritorio, equilibrada en móvil (batería)
-        quality: window.matchMedia("(min-width: 900px)").matches ? "high" : "balanced",
+        quality: window.matchMedia("(min-width: 900px)").matches
+          ? "high"
+          : "balanced",
         fps: 30,
         adaptiveResolution: true,
-        lens: { droplets: false, flare: 0.35, vignette: false },
         particles: { precipitation: false },
         filter: { id: "faded", amount: 0.3 },
         onReady: (ok) => !cancelled && setReady(ok),
