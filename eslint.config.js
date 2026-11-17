@@ -3,7 +3,7 @@ import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
-  { ignores: [".next", "next-env.d.ts"] },
+  { ignores: [".next", ".netlify", "next-env.d.ts"] },
   js.configs.recommended,
   reactHooks.configs.flat.recommended,
   {
