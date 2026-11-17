@@ -1,3 +1,8 @@
 [build]
   command = "pnpm build"
   publish = ".next"
+
+# Sin el adaptador, Netlify sube .next como archivos sueltos: la página da 404
+# y /api/weather no existe. Se declara explícito para que siempre se ejecute.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
