@@ -79,12 +79,12 @@ export default function WeatherApp() {
                   ))}
                 </h1>
                 <p className="place__when js-meta">
-                  {formatLocal(Date.now() / 1000, data.timezone, {
+                  {formatLocal(data.dt, data.timezone, {
                     weekday: "long",
                     day: "numeric",
                     month: "long",
                   })}
-                  , {formatLocal(Date.now() / 1000, data.timezone, {
+                  , {formatLocal(data.dt, data.timezone, {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}{" "}

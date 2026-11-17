@@ -1,6 +1,6 @@
 import { useLayoutEffect } from "react";
 import gsap from "gsap";
-import { arcPoint } from "../components/SunArc";
+import { arcPoint } from "../utils/arc";
 
 /**
  * Secuencia de entrada cada vez que llega una ciudad nueva:
