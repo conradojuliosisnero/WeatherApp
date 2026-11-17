@@ -645,8 +645,8 @@ button.temp__unit:hover {
 }
 /* El cielo real se funde con el horizonte pastel antes del suelo: sin corte brusco */
 .sky-backdrop {
-  -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 78%, transparent 100%);
 }
 
 /* Con el cielo real a la vista, el sol y la luna los dibuja él: el arco sobra */
